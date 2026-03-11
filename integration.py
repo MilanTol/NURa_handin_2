@@ -34,14 +34,14 @@ def romberg_integrator(
     h = b - a
 
     r = np.ndarray((order,)) # initialize array which will contain romberg iterations of shape (order,)
-    r[0] = h * 0.5 *  (func(a) + func(b)) # compute initial estimate using trapezoid
+    r[0] = h * 0.5 *  (func(a, *args) + func(b, *args)) # compute initial estimate using trapezoid
     N_p = 1 # initializes the number of points that will be sampled during each iteration
     for i in range(1, order): #ranges from 1 to m-1
         Delta = h # define delta separately 
         h = h/2 # Delta must be 2*h so that you dont recompute points from previous iterations!
         
         xs = np.linspace(a+h, b-h, N_p) # create linspace with x values in between already sampled values
-        r[i] = 0.5* (r[i-1] + Delta*np.sum(func(xs)))
+        r[i] = 0.5* (r[i-1] + Delta*np.sum(func(xs, *args)))
         N_p *= 2
 
     # combine romberg iterations using Richardson extrapolation

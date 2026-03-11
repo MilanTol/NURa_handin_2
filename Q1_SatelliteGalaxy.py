@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from .integration import romberg_integrator
+from integration import romberg_integrator
 
 
 def n(
