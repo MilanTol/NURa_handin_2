@@ -2,6 +2,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from .integration import romberg_integrator
+
 
 def n(
     x: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
