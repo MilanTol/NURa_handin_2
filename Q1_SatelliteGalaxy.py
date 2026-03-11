@@ -32,8 +32,8 @@ def n(
         Same type and shape as x. Number density of satellite galaxies
         at given radius x.
     """
-    
-    return 0  # insert your function
+    b_inv = 1/b
+    return A * Nsat * (x*b_inv)**(a-3) * np.exp(-(x*b_inv)**c)
 
 
 #### Sampler block ####
@@ -225,19 +225,21 @@ def main():
     N_generate = 10000
     xx = np.linspace(xmin, xmax, N_generate)
 
-    integrand = lambda x, a, b, c: 0.0  # insert the correct function
+    integrand = lambda x, a, b, c: n(x, 1, Nsat, a, b, c)  # insert the correct function
     integral, err = romberg_integrator(
-        integrand, bounds, order=2, args=(a, b, c), err=True
+        integrand, bounds, order=5, args=(a, b, c), err=True
     )
 
     # Normalisation
-    A = 1.0  # to be computed
+    A = Nsat/integrand  
     with open("Calculations/satellite_A.txt", "w") as f:
         f.write(f"{A:.12g}\n")
-    integrand = lambda x, a, b, c: 0.0  # replace by the correct function
-    integrated_Nsat = (
-        0.0  # replace by the correct integral, e.g. by calling your integrator
+    integrand = lambda x, a, b, c: n(x, A, Nsat, a, b, c)  # replace by the correct function
+    integrated_Nsat, err = romberg_integrator(
+        integrand, bounds, order=5, args=(a, b, c), err=True
     )
+
+    print(integrated_Nsat)
 
     p_of_x = (
         lambda x: 0.0

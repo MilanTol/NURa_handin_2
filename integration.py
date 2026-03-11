@@ -13,7 +13,7 @@ def romberg_integrator(
     bounds : tuple
         Lower- and upper bound for integration.
     order : int, optional
-        Order of the integration.
+        Order of the integration: draws 2^order + 1 samples.
         The default is 5.
     err : bool, optional
         Whether to retun first error estimate.
