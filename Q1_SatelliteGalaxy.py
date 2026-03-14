@@ -275,6 +275,10 @@ def main():
     with open("Calculations/satellite_A.txt", "w") as f:
         f.write(f"{A:.12g}\n")
 
+    # to go from n(x) to N(x) we can use that 
+    # n(x)dV = 4*np.pi*x**2 * n(x)dx = N(x)dx
+    # so we obtain: N(x) = 1/(4*np.pi*x**2) n(x)
+    # thus p(x)dx = 1/(4*np.pi*Nsat*x**2) n(x)
     p_of_x = (
         lambda x: 0.0
     )  # replace by the normalised distribution of satellite galaxies as a function of x

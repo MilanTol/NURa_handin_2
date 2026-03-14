@@ -118,7 +118,6 @@ q
 \;dq.
 \end{equation}
 
-
 \begin{table}[H]
 \centering
 \caption{Normalization constant of the satellite galaxy profile.}
@@ -139,6 +138,22 @@ Normalization constant \(A\) \\
 
 Describe the sampling method used (e.g. rejection sampling).  
 Explain how the random number generator was implemented and how its randomness was tested.
+
+To go from $n(x)$ to $N(x)$ we can use that $n(x)dV = 4\pi x^2 n(x) dx$.
+But note that this is exactly the \textit{number} of galaxies in the infinitesimal range $[x, x+dx)$.
+So $N(x) = 4\pi x^2 n(x)$ from which we find that
+\begin{equation}
+  p(x)dx = \frac{4\pi x^2}{ \langle N_\mathrm{sat}\rangle } n(x) dx.
+\end{equation}
+Fillin in $n(x)$:
+\begin{equation}
+  p(x)dx = 
+  4\pi
+  A 
+  \left( \frac{x}{b}\right)^{a-1}
+  \exp\left[-\left(\frac{x}{b}\right)^c\right] 
+  dx.
+\end{equation}
 
 \begin{figure}[H]
 \centering
