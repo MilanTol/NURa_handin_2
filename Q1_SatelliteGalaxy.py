@@ -253,44 +253,27 @@ def main():
     b = 0.25
     c = 1.6
     Nsat = 100
-    bounds1 = (1e-5, b)
-    bounds2 = (b, 5)
-    #we can split the integral in 2: 
-    # one integral where we integrate up to b in logspace (there the power law is important)
-    # another integral where we integrate from b up to 5 in linear space (there the exponential is important)
+    bounds = (1e-5, 5)
 
-    #compute the first integral
-    log_bounds1 = np.log(bounds1) #convert the bounds to log bounds since we integrate in logspace
-    integrand1 = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c) #use logspace integrand
-    integral1, err1 = romberg_integrator(
-        integrand1, log_bounds1, order=6, args=(a, b, c), err=True
+    log_bounds = np.log(bounds) #convert the bounds to log bounds since we integrate in logspace
+    integrand = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c) #use logspace integrand
+    integral, err = romberg_integrator(
+        integrand, log_bounds, order=7, args=(a, b, c), err=True
     )
-    print(integral1, err1)
+    print(integral, err)
 
-    #compute the second integral
-    integrand2 = lambda x, a, b, c: 4*np.pi*x**2 * n(x, A=1, Nsat=Nsat, a=a, b=b, c=c)  # use linear space integrand
-    integral2, err2 = romberg_integrator(
-        integrand2, bounds2, order=6, args=(a, b, c), err=True
-    )
-    print(integral2, err2)
-
-    integral = integral1 + integral2
-    err = err1 + err2
-    print("integral sum", integral, err)
-    
     # Normalisation
     A = Nsat/integral  
     print("A", A)
 
-    integrand = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c)
+    integrand = lambda u, a, b, c: logspace_integrand(u, A=A, Nsat=Nsat, a=a, b=b, c=c)
     integrated_Nsat, err = romberg_integrator(
-        integrand, np.log([1e-5, 5]), order=6, args=(a, b, c), err=True
+        integrand, np.log([1e-5, 5]), order=7, args=(a, b, c), err=True
     )
     print(integrated_Nsat, err)
-    exit()
+
     with open("Calculations/satellite_A.txt", "w") as f:
         f.write(f"{A:.12g}\n")
-
 
     p_of_x = (
         lambda x: 0.0
