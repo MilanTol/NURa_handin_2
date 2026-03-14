@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from integration import romberg_integrator
+from integration import romberg_integrator, romberg_integrator_logspace
 
 
 def n(
@@ -34,6 +34,37 @@ def n(
     """
     b_inv = 1/b
     return A * Nsat * (x*b_inv)**(a-3) * np.exp(-(x*b_inv)**c)
+
+
+def logspace_integrand(
+    u: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
+) -> float | np.ndarray:
+    """
+    The integrand as described in eq. 4 in the text. 
+
+    Parameters
+    ----------
+    u : float | ndarray
+        ln(r / r_virial).
+    A : float
+        Normalisation
+    Nsat : float
+        Average number of satellites
+    a : float
+        Small-scale slope
+    b : float
+        Transition scale
+    c : float
+        Steepness of exponential drop-off
+
+    Returns
+    -------
+    float | ndarray
+        Same type and shape as x. Number density of satellite galaxies
+        at given radius x.
+    """
+    return 4*np.pi*b**(3-a)*A*Nsat*np.exp(a*u - np.exp(c*u)*b**-c) #see eq. 4
+
 
 
 #### Sampler block ####
@@ -214,32 +245,54 @@ def compute_derivative(
 
 
 def main():
+    xmin, xmax = 10**-4, 5
+    N_generate = 10000
+    xx = np.linspace(xmin, xmax, N_generate)
 
     # Values from the hand-in
     a = 2.4
     b = 0.25
     c = 1.6
     Nsat = 100
-    bounds = (0, 5)
-    xmin, xmax = 10**-4, 5
-    N_generate = 10000
-    xx = np.linspace(xmin, xmax, N_generate)
+    bounds1 = (1e-5, b)
+    bounds2 = (b, 5)
+    #we can split the integral in 2: 
+    # one integral where we integrate up to b in logspace (there the power law is important)
+    # another integral where we integrate from b up to 5 in linear space (there the exponential is important)
 
-    integrand = lambda x, a, b, c: n(x, 1, Nsat, a, b, c)  # insert the correct function
-    integral, err = romberg_integrator(
-        integrand, bounds, order=5, args=(a, b, c), err=True
+    #compute the first integral
+    log_bounds1 = np.log(bounds1) #convert the bounds to log bounds since we integrate in logspace
+    
+    integrand1 = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c) #use logspace integrand
+    integral1, err1 = romberg_integrator(
+        integrand1, log_bounds1, order=9, args=(a, b, c), err=True
     )
+    print(integral1, err1)
 
+    integrand2 = lambda x, a, b, c: n(x, A=1, Nsat=Nsat, a=a, b=b, c=c)  # use linear space integrand
+    integral2, err2 = romberg_integrator(
+        integrand2, bounds2, order=7, args=(a, b, c), err=True
+    )
+    #compute the second integral
+    print(integral2, err2)
+
+    integral = integral1 + integral2
+    err = err1 + err2
+    print("integral sum", integral, err)
+    
     # Normalisation
-    A = Nsat/integrand  
+    A = Nsat/integral  
+    print("A", A)
+
+    integrand = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c)
+    integrated_Nsat, err = romberg_integrator(
+        integrand, np.log([1e-5, 5]), order=9, args=(a, b, c), err=True
+    )
+    print(integrated_Nsat, err)
+    exit()
     with open("Calculations/satellite_A.txt", "w") as f:
         f.write(f"{A:.12g}\n")
-    integrand = lambda x, a, b, c: n(x, A, Nsat, a, b, c)  # replace by the correct function
-    integrated_Nsat, err = romberg_integrator(
-        integrand, bounds, order=5, args=(a, b, c), err=True
-    )
 
-    print(integrated_Nsat)
 
     p_of_x = (
         lambda x: 0.0

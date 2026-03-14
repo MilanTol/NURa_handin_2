@@ -31,7 +31,7 @@ def romberg_integrator(
     """
 
     a, b = bounds
-    h = b - a
+    h =b-a
 
     r = np.ndarray((order,)) # initialize array which will contain romberg iterations of shape (order,)
     r[0] = h * 0.5 *  (func(a, *args) + func(b, *args)) # compute initial estimate using trapezoid
@@ -54,7 +54,11 @@ def romberg_integrator(
     # return best estimates
     if err:
         return r[0], np.abs(r[0] - r[1])
-    return r[0]
+    else:
+        return r[0]
+    
+    
+
     
 
     

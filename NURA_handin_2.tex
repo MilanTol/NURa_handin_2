@@ -46,11 +46,14 @@
 \begin{document}
 \maketitle
 
-\textit{Write a short description of your solution in each section. Explain your choices. Explicitly draw conclusions from your results.}
+\textit{Write a short description of your solution in each section. Explain your choices. 
+Explicitly draw conclusions from your results.}
 
-\textit{You can refer to selected lines of code where you think it is necessary. However, you must provide the full code relevant to each (sub)question below it.}
+\textit{You can refer to selected lines of code where you think it is necessary. 
+However, you must provide the full code relevant to each (sub)question below it.}
 
-\textit{Don't forget to describe your figures and mention what conclusions you draw from them!}
+\textit{Don't forget to describe your figures and 
+mention what conclusions you draw from them!}
 
 
 \section{Satellite galaxies around a massive central}
@@ -59,6 +62,43 @@
 
 Explain the integration method used (e.g. Romberg integration or another Richardson method).  
 Describe how you implemented the spherical volume element \(dV\).
+
+We will first solve the integral 
+\begin{equation}
+\int \int \int_V n(x) dV.
+\end{equation}
+Afterwards we will solve for A by requiring that the integral equals $\langle N_\mathrm{sat} \rangle$.
+Note that
+\begin{equation}
+n(x) = A \langle N_\mathrm{sat} \rangle 
+\left( \frac{x}{b}\right)^{a-3}
+\exp\left[-\left(\frac{x}{b}\right)^c\right]
+\end{equation}
+does not depend on $\theta$ and  $\phi$. Using spherical coordinates turns this 3d integral into a 
+1-dimensional integral which is a lot easier to solve numerically. 
+The integral then becomes
+\begin{equation}
+4\pi\int_{10^{-5}}^5 
+A \langle N_\mathrm{sat} \rangle 
+\left( \frac{x}{b}\right)^{a-3}
+\exp\left[-\left(\frac{x}{b}\right)^c\right]
+x^2 dx.
+\end{equation}
+We will use Romberg integration as our method of numeric integration.
+Romberg integration is a lot more accurate if the function is close to linear,
+Since it uses evenly spaced samples and trapezoid to approximate the function. 
+Hence we rewrite the integral into an integral over logspace, as this makes sure 
+the inner region of the profile, which contributes the most, gets a sufficient amount of samples.
+So we make the substitution $u \equiv \mathrm{ln}x$, $du \equiv 1/x dx$
+and rewrite the integral to:
+\begin{equation}
+4\pi b^{3 - a}\int_{\ln(10^{-5})}^{\ln(5)} 
+A \langle N_\mathrm{sat} \rangle 
+\exp\left(au
+-\frac{\exp(cu)}{b^c}\right)
+du.
+\end{equation}
+
 
 \begin{table}[H]
 \centering
