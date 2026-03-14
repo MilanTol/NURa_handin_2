@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from integration import romberg_integrator
-
+from distribution import Distribution
 
 def n(
     x: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
@@ -277,24 +277,20 @@ def main():
 
     # to go from n(x) to N(x) we can use that 
     # n(x)dV = 4*np.pi*x**2 * n(x)dx = N(x)dx
-    # so we obtain: N(x) = 1/(4*np.pi*x**2) n(x)
-    # thus p(x)dx = 1/(4*np.pi*Nsat*x**2) n(x)
+    # so we obtain: N(x) = 4*np.pi*x**2 n(x)
+    # thus p(x)dx = 4*np.pi/Nsat*x**2 n(x) which we can rewrite to
     p_of_x = (
-        lambda x: 0.0
-    )  # replace by the normalised distribution of satellite galaxies as a function of x
-
-    # Numerically determine maximum to normalize p(x) for sampling
-    pmax = 0.0  # replace by taking the maximum value of p_of_x
-
-    p_of_x_norm = lambda x: 0.0  # replace by the normalised distribution
-    random_samples = np.zeros(
-        N_generate
-    )  # replace by your sampler(p_of_x_norm, min=xmin, max=xmax, Nsamples=N_generate, args=())
+        lambda x: 4*np.pi*A*(x/b)**(a-1) * np.exp(-(x/b)**c)
+    )  
+    p_of_x = Distribution(p_of_x, xmin=xmin, xmax=xmax) # initialize as distribution object
+    # Numerically determine maximum to normalize p(x) for sampling:
+    # by plotting the distribution, we can see it never exceeds 5: p(x) < 5.
+    pmax = 5.0  # replace by taking the maximum value of p_of_x
+    random_samples = p_of_x.rejection(N_samples=N_generate, pmax=pmax)
 
     edges = 10 ** np.linspace(np.log10(xmin), np.log10(xmax), 21)
-
     hist = np.histogram(
-        xmin + np.sort(np.random.rand(N_generate)) * (xmax - xmin), bins=edges
+        xmin + np.sort(np.random(N_generate)) * (xmax - xmin), bins=edges
     )[
         0
     ]  # replace!
