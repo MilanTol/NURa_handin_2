@@ -87,16 +87,35 @@ x^2 dx.
 We will use Romberg integration as our method of numeric integration.
 Romberg integration is a lot more accurate if the function is close to linear,
 Since it uses evenly spaced samples and trapezoid to approximate the function. 
-Hence we rewrite the integral into an integral over logspace, as this makes sure 
-the inner region of the profile, which contributes the most, gets a sufficient amount of samples.
+We split up the integral into 2 parts:
+\begin{equation}
+4\pi\int_{10^{-5}}^b 
+n(x)
+x^2 dx.
++ 
+4\pi\int_{b}^5
+n(x)
+x^2 dx.
+\end{equation}
+In the first integral the $\left(\frac{x}{b}\right)$ term varies most rapidly. While in the second the exponential dominates the change in value of the integrand.  
+For the first integral we rewrite the integral into an integral over logspace, as this makes sure the inner region of the profile, which contributes the most, gets a sufficient amount of samples.
 So we make the substitution $u \equiv \mathrm{ln}x$, $du \equiv 1/x dx$
 and rewrite the integral to:
 \begin{equation}
-4\pi b^{3 - a}\int_{\ln(10^{-5})}^{\ln(5)} 
+4\pi b^{3 - a}\int_{\ln(10^{-5})}^{\ln(b)} 
 A \langle N_\mathrm{sat} \rangle 
 \exp\left(au
 -\frac{\exp(cu)}{b^c}\right)
 du.
+\end{equation}
+For the second integral we rewrite the integrand using the substitution 
+$q \equiv \exp[(-x/b)^c]$, $dx = -\frac{b}{c}\left( \frac{x}{b}\right)^{1-c} dq$, $x=-b(\ln q)^{-c}$:
+\begin{equation}
+-4\pi\int_{\exp(-1)}^{\exp[-(5/b)^c]}
+A \langle N_\mathrm{sat} \rangle 
+\frac{b}{c}\left( \ln q\right)^{q-2c}
+q
+\;dq.
 \end{equation}
 
 

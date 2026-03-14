@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from integration import romberg_integrator, romberg_integrator_logspace
+from integration import romberg_integrator
 
 
 def n(
@@ -40,7 +40,7 @@ def logspace_integrand(
     u: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
 ) -> float | np.ndarray:
     """
-    The integrand as described in eq. 4 in the text. 
+    The integrand as described in eq. 5 in the text. 
 
     Parameters
     ----------
@@ -63,8 +63,7 @@ def logspace_integrand(
         Same type and shape as x. Number density of satellite galaxies
         at given radius x.
     """
-    return 4*np.pi*b**(3-a)*A*Nsat*np.exp(a*u - np.exp(c*u)*b**-c) #see eq. 4
-
+    return 4*np.pi*b**(3-a)*A*Nsat*np.exp(a*u - np.exp(c*u)*b**-c) #see eq. 5
 
 
 #### Sampler block ####
@@ -262,18 +261,17 @@ def main():
 
     #compute the first integral
     log_bounds1 = np.log(bounds1) #convert the bounds to log bounds since we integrate in logspace
-    
     integrand1 = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c) #use logspace integrand
     integral1, err1 = romberg_integrator(
-        integrand1, log_bounds1, order=9, args=(a, b, c), err=True
+        integrand1, log_bounds1, order=6, args=(a, b, c), err=True
     )
     print(integral1, err1)
 
-    integrand2 = lambda x, a, b, c: n(x, A=1, Nsat=Nsat, a=a, b=b, c=c)  # use linear space integrand
-    integral2, err2 = romberg_integrator(
-        integrand2, bounds2, order=7, args=(a, b, c), err=True
-    )
     #compute the second integral
+    integrand2 = lambda x, a, b, c: 4*np.pi*x**2 * n(x, A=1, Nsat=Nsat, a=a, b=b, c=c)  # use linear space integrand
+    integral2, err2 = romberg_integrator(
+        integrand2, bounds2, order=6, args=(a, b, c), err=True
+    )
     print(integral2, err2)
 
     integral = integral1 + integral2
@@ -286,7 +284,7 @@ def main():
 
     integrand = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c)
     integrated_Nsat, err = romberg_integrator(
-        integrand, np.log([1e-5, 5]), order=9, args=(a, b, c), err=True
+        integrand, np.log([1e-5, 5]), order=6, args=(a, b, c), err=True
     )
     print(integrated_Nsat, err)
     exit()
