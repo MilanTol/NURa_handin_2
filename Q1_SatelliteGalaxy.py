@@ -298,17 +298,15 @@ def main():
     rand_arr = np.array(rand_arr)
     
     # sort the random_array and store its index array using quicksort
-    rand_arr_sorter = Sorter(rand_arr)
-    sorted_rand_arr, indx_rand_arr = rand_arr_sorter.quicksort(make_indx=True)
+    # rand_arr_sorter = Sorter(rand_arr)
+    # sorted_rand_arr, indx_rand_arr = rand_arr_sorter.quicksort(make_indx=True)
+    sorted_rand_arr, indx_rand_arr = Sorter.quicksort(self=None, arr=rand_arr, make_indx=True)
 
     # select 100 galaxies randomly by taking the first 100 indices from indx_rand_arr
     chosen = random_samples[indx_rand_arr[:100]]
     
     # sort the chosen galaxies
-    chosen_sorter = Sorter(chosen)
-    sorted_chosen = chosen_sorter.quicksort()
-
-    print(sorted_chosen)
+    sorted_chosen = Sorter.quicksort(self=None, arr=chosen)
 
     # Cumulative plot of the chosen galaxies (1c)
     fig1c, ax = plt.subplots()

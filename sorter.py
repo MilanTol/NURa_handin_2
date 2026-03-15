@@ -34,6 +34,8 @@ class Sorter:
         Sorts the array stored in Sorter object.
         If passed an array, sorts the array (Does not make a copy!)
         """
+        if self is None:
+            self = Sorter(arr)
         if arr is None:
             arr = self.arr.copy()
         else:
@@ -45,7 +47,7 @@ class Sorter:
                 return arr
             if N == 2: #quickly sort 2 elements
                 if arr[0] > arr[1]: #if unsorted, swap the two elements
-                    arr[[0,1]] = arr[[0,1]]
+                    arr[[0,1]] = arr[[1,0]]
                 return arr
             
             #set pivot index to halfway
