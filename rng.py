@@ -63,8 +63,8 @@ class RNG:
         """
 
         if bounds is None:
-            return (self.int()/2**63) #np.int64 can obtain integers in the range [0, 2^63]
+            return (self.int()/2**64) #np.int64 can obtain integers in the range [0, 2^64]
         else:
             a, b = bounds
-            return (self.int()/2**63) * (b - a) + a
+            return (self.int()/2**64) * (b - a) + a
 
