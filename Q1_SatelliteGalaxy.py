@@ -300,7 +300,7 @@ def main():
 
     fig = plt.figure()
     relative_radius = edges.copy()  # replace!
-    analytical_function = p_of_x  
+    analytical_function = p_of_x(relative_radius) 
 
     fig1b, ax = plt.subplots()
     ax.stairs(

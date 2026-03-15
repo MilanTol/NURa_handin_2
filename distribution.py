@@ -23,6 +23,9 @@ class Distribution:
         self.args = args
         self.rng = RNG(seed)
 
+    def __call__(self, x):
+        return self.dist(x, *self.args)
+
     def rejection(self, N_samples:int=1, pmax:float=1) -> np.ndarray:
         """
         samples x values from the distribution using rejection sampling.
