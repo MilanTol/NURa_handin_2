@@ -272,8 +272,8 @@ def main():
     )
     print(integrated_Nsat, err)
 
-    with open("Calculations/satellite_A.txt", "w") as f:
-        f.write(f"{A:.12g}\n")
+    # with open("Calculations/satellite_A.txt", "w") as f:
+    #     f.write(f"{A:.12g}\n")
 
     # to go from n(x) to N(x) we can use that 
     # n(x)dV = 4*np.pi*x**2 * n(x)dx = N(x)dx
@@ -300,7 +300,7 @@ def main():
 
     fig = plt.figure()
     relative_radius = edges.copy()  # replace!
-    analytical_function = edges.copy()  # replace
+    analytical_function = p_of_x  
 
     fig1b, ax = plt.subplots()
     ax.stairs(
