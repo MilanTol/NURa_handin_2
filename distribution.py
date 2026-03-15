@@ -46,7 +46,8 @@ class Distribution:
         for i in range(N_samples):
             x = self.rng.float((self.xmin, self.xmax)) #randomly draw an x in between bounds
             y = self.rng.float((0, pmax)) #draw a y in between 0 and pmax
-            if y > self.dist(x, *self.args):
+            dist_val = self.dist(x, *self.args)
+            if y < dist_val:
                 samples.append(x)
         return np.array(samples)
 

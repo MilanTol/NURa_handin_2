@@ -285,15 +285,15 @@ def main():
     p_of_x = Distribution(p_of_x, xmin=xmin, xmax=xmax) # initialize as distribution object
     # Numerically determine maximum to normalize p(x) for sampling:
     # by plotting the distribution, we can see it never exceeds 5: p(x) < 5.
-    pmax = 5.0  # replace by taking the maximum value of p_of_x
+    pmax = 5.0  
     random_samples = p_of_x.rejection(N_samples=N_generate, pmax=pmax)
 
     edges = 10 ** np.linspace(np.log10(xmin), np.log10(xmax), 21)
-    hist, bin_edges = np.histogram( # We are allowed to use np.hist (yay)
+    hist, bin_edges = np.histogram( # We are allowed to use np.hist 
         random_samples, bins=edges
     )
     hist_scaled = (
-        1e-3 * hist
+        hist #* 1e-3
     )  # replace; this is NOT what you should be plotting, 
     # this is just a random example to get a plot with reasonable y values 
     # (think about how you *should* scale hist)
@@ -319,7 +319,7 @@ def main():
     )
     ax.legend()
     plt.savefig("Plots/my_solution_1b.png", dpi=600)
-
+    exit()
     # Cumulative plot of the chosen galaxies (1c)
     chosen = xmin + np.sort(np.random.rand(Nsat)) * (xmax - xmin)  # replace!
     fig1c, ax = plt.subplots()
