@@ -311,7 +311,7 @@ def main():
     )  # correct this according to the exercise!
     ax.set(
         xlim=(xmin, xmax),
-        ylim=(10 ** (-3), 10),  # you may or may not need to change ylim
+        ylim=(10**(-3), 10),  # you may or may not need to change ylim
         yscale="log",
         xscale="log",
         xlabel="Relative radius",
