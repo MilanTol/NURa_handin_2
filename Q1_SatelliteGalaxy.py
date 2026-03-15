@@ -3,7 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from integration import romberg_integrator
+from rng import RNG
 from distribution import Distribution
+from sorter import Sorter
 
 def n(
     x: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
@@ -63,45 +65,10 @@ def logspace_integrand(
         Same type and shape as x. Number density of satellite galaxies
         at given radius x.
     """
-    return 4*np.pi*b**(3-a)*A*Nsat*np.exp(a*u - np.exp(c*u)*b**-c) #see eq. 5
-
-
-#### Sampler block ####
-
-
-def sampler(
-    dist: callable,
-    min: float,
-    max: float,
-    Nsamples: int,
-    args: tuple = (),
-) -> np.ndarray:
-    """
-    Sample a distribution using sampling method of your choice
-
-    Parameters
-    dist : callable
-        Distribution to sample
-    min :
-        Minimum value for sampling
-    max : float
-        Maximum value for sampling
-    Nsamples : int
-        Number of samples
-    args : tuple, optional
-        Arguments of the distribution to sample, passed as args to dist
-
-    Returns
-    -------
-    sample: ndarray
-        Values sampled from dist, shape (Nsamples,)
-    """
-
-    return np.zeros(Nsamples)
+    return 4*np.pi * b**(3-a) * A*Nsat * np.exp(a*u - np.exp(c*u)*b**-c) #see eq. 5
 
 
 #### Sorting block ####
-
 
 def sort_array(
     arr: np.ndarray,
@@ -132,7 +99,6 @@ def sort_array(
     # TODO: sort sorted_arr in-place here
 
     return sorted_arr
-
 
 def choice(arr: np.ndarray, size: int = 1) -> np.ndarray:
     """
@@ -245,7 +211,7 @@ def compute_derivative(
 
 def main():
     xmin, xmax = 10**-4, 5
-    N_generate = 100000
+    N_generate = 10000
     xx = np.linspace(xmin, xmax, N_generate)
 
     # Values from the hand-in
@@ -283,7 +249,7 @@ def main():
     # = 4*np.pi*b**2 * A (x/b)**(a-1) * np.exp(-(x*b)**c)
     b_inv = 1/b
     p_of_x = (
-        lambda x: 4*np.pi*b**2 * A*(x*b_inv)**(a-1) * np.exp(-(x*b_inv)**c)
+        lambda x: 4*np.pi * b**2 * A*(x*b_inv)**(a-1) * np.exp(-(x*b_inv)**c)
     )  
     p_of_x = Distribution(p_of_x, xmin=xmin, xmax=xmax, seed=1) # initialize as distribution object
     # Numerically determine maximum to normalize p(x) for sampling:
@@ -318,13 +284,35 @@ def main():
     )
     ax.legend()
     plt.savefig("Plots/my_solution_1b.png", dpi=600)
-    exit()
 
+    # 1c
+    # we can randomly select galaxies from the samples of b by sorting an array with random integers
+    # with length equal to the number of samples of b. The corresponding indexing array will then 
+    # give us the indices of the randomly drawn galaxies.
+
+    # First we fill the random array:
+    rng = RNG(seed=1)
+    rand_arr = []
+    for i in range(len(random_samples)):
+        rand_arr.append(rng.int())
+    rand_arr = np.array(rand_arr)
+    
+    # sort the random_array and store its index array using quicksort
+    rand_arr_sorter = Sorter(rand_arr)
+    sorted_rand_arr, indx_rand_arr = rand_arr_sorter.quicksort(make_indx=True)
+
+    # select 100 galaxies randomly by taking the first 100 indices from indx_rand_arr
+    chosen = random_samples[indx_rand_arr[:100]]
+    
+    # sort the chosen galaxies
+    chosen_sorter = Sorter(chosen)
+    sorted_chosen = chosen_sorter.quicksort()
+
+    print(sorted_chosen)
 
     # Cumulative plot of the chosen galaxies (1c)
-    chosen = xmin + np.sort(np.random.rand(Nsat)) * (xmax - xmin)  # replace!
     fig1c, ax = plt.subplots()
-    ax.plot(chosen, np.arange(100))
+    ax.plot(sorted_chosen, np.arange(100))
     ax.set(
         xscale="log",
         xlabel="Relative radius",
