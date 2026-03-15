@@ -283,23 +283,19 @@ def main():
     # = 4*np.pi*b**2 * A (x/b)**(a-1) * np.exp(-(x*b)**c)
     b_inv = 1/b
     p_of_x = (
-        lambda x: 4*np.pi*b**2*A*(x*b_inv)**(a-1) * np.exp(-(x*b_inv)**c)
+        lambda x: 4*np.pi*b**2 * A*(x*b_inv)**(a-1) * np.exp(-(x*b_inv)**c)
     )  
     p_of_x = Distribution(p_of_x, xmin=xmin, xmax=xmax, seed=4) # initialize as distribution object
     # Numerically determine maximum to normalize p(x) for sampling:
     # by plotting the distribution, we can see it never exceeds 3: p(x) < 3.
     pmax = 3
     random_samples = p_of_x.rejection(N_samples=N_generate, pmax=pmax)
-
+    
     edges = np.geomspace(xmin, xmax, 21)
-    hist, bin_edges = np.histogram( # We are allowed to use np.hist 
-        random_samples, bins=edges
-    )
-    hist_scaled = (
-        hist/100 #divide out the <N_sat> 
-    )  # replace; this is NOT what you should be plotting, 
-    # this is just a random example to get a plot with reasonable y values 
-    # (think about how you *should* scale hist)
+    binwidths = edges[1:] - edges[:1]
+    hist, bin_edges = np.histogram(random_samples, bins=edges)# We are allowed to use np.hist   
+    hist = np.array(hist/binwidths, dtype=np.int64)
+    hist_scaled = (hist / 100) #divide out the normalization offset 10000/<Nsat> = 100
 
     fig = plt.figure()
     relative_radius = np.geomspace(1e-4, 5, 100) 
@@ -314,7 +310,7 @@ def main():
     )  # correct this according to the exercise!
     ax.set(
         xlim=(xmin, xmax),
-        ylim=(10**(-3), 100),  # you may or may not need to change ylim
+        ylim=(10**(-3), 50),  # you may or may not need to change ylim
         yscale="log",
         xscale="log",
         xlabel="Relative radius",
@@ -324,7 +320,7 @@ def main():
     plt.savefig("Plots/my_solution_1b.png", dpi=600)
     exit()
 
-    
+
     # Cumulative plot of the chosen galaxies (1c)
     chosen = xmin + np.sort(np.random.rand(Nsat)) * (xmax - xmin)  # replace!
     fig1c, ax = plt.subplots()
