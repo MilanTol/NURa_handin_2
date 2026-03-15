@@ -100,7 +100,7 @@ def sort_array(
 
     return sorted_arr
 
-def choice(arr: np.ndarray, size: int = 1) -> np.ndarray:
+def choice(arr: np.ndarray, rng:RNG, size: int = 1,) -> np.ndarray:
     """
     Choose given number of random elements from an array, without replacement
 
@@ -108,6 +108,8 @@ def choice(arr: np.ndarray, size: int = 1) -> np.ndarray:
     ----------
     arr : ndarray
         Array to shuffle
+    rng : RNG
+        Random Number Generator object
     size : int, optional
         Number of elements to pick from array
         The default is 1
@@ -117,8 +119,20 @@ def choice(arr: np.ndarray, size: int = 1) -> np.ndarray:
     chosen : ndarray
         Randomly chosen elements from arr, shape (size,)
     """
-    # TODO: Implement your choice function here, e.g. by using Fisher-Yates shuffling
-    return arr[:size].copy()
+    # I implement the fisher yates algorithm for randomly drawing unique elements from list
+    # source: Wikipedia (https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle)
+    N = len(arr) 
+    if size > N:
+        raise Exception("requested size is larger than array length")
+    
+    chosen = [] #instantiate list in which to store chosen samples
+    for i in range(size):
+        chosen_indx = rng.int((0, N-1)) #draw a random index
+        chosen.append(arr[chosen_indx])
+        arr[[i, N-1]] = arr[[N-1, i]] # put drawn sample at N-1th index
+        N -= 1 # shorten the amount of indices which can be drawn to avoid drawing same element twice
+
+    return np.array(chosen)
 
 
 ##### Derivative block #####
@@ -286,24 +300,8 @@ def main():
     plt.savefig("Plots/my_solution_1b.png", dpi=600)
 
     # 1c
-    # we can randomly select galaxies from the samples of b by sorting an array with random integers
-    # with length equal to the number of samples of b. The corresponding indexing array will then 
-    # give us the indices of the randomly drawn galaxies.
-
-    # First we fill the random array:
-    rng = RNG(seed=1)
-    rand_arr = []
-    for i in range(len(random_samples)):
-        rand_arr.append(rng.int())
-    rand_arr = np.array(rand_arr)
-    
-    # sort the random_array and store its index array using quicksort
-    # rand_arr_sorter = Sorter(rand_arr)
-    # sorted_rand_arr, indx_rand_arr = rand_arr_sorter.quicksort(make_indx=True)
-    sorted_rand_arr, indx_rand_arr = Sorter.quicksort(self=None, arr=rand_arr, make_indx=True)
-
-    # select 100 galaxies randomly by taking the first 100 indices from indx_rand_arr
-    chosen = random_samples[indx_rand_arr[:100]]
+    rng = RNG(seed=3) #instantiate RNG object for choice function
+    chosen = choice(random_samples, rng, 100)
     
     # sort the chosen galaxies
     sorted_chosen = Sorter.quicksort(self=None, arr=chosen)

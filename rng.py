@@ -35,7 +35,8 @@ class RNG:
 
         Returns
         -------
-        a random np.int64 in between the two bounds if provided. Otherwise in range of np.uint64.
+        a random np.int64 in between the two bounds if provided (including bounds). 
+        Otherwise in range of np.uint64.
         """
 
         # using python int to prevent overflow warnings
