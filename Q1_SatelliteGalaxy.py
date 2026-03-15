@@ -289,14 +289,14 @@ def main():
     random_samples = p_of_x.rejection(N_samples=N_generate, pmax=pmax)
 
     edges = 10 ** np.linspace(np.log10(xmin), np.log10(xmax), 21)
-    hist = np.histogram(
-        xmin + np.sort(np.random(N_generate)) * (xmax - xmin), bins=edges
-    )[
-        0
-    ]  # replace!
+    hist, bin_edges = np.histogram( # We are allowed to use np.hist (yay)
+        random_samples, bins=edges
+    )
     hist_scaled = (
         1e-3 * hist
-    )  # replace; this is NOT what you should be plotting, this is just a random example to get a plot with reasonable y values (think about how you *should* scale hist)
+    )  # replace; this is NOT what you should be plotting, 
+    # this is just a random example to get a plot with reasonable y values 
+    # (think about how you *should* scale hist)
 
     fig = plt.figure()
     relative_radius = edges.copy()  # replace!
