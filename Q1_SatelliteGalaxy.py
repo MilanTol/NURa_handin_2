@@ -245,7 +245,7 @@ def compute_derivative(
 
 def main():
     xmin, xmax = 10**-4, 5
-    N_generate = 10000
+    N_generate = 100000
     xx = np.linspace(xmin, xmax, N_generate)
 
     # Values from the hand-in
@@ -285,7 +285,7 @@ def main():
     p_of_x = (
         lambda x: 4*np.pi*b**2 * A*(x*b_inv)**(a-1) * np.exp(-(x*b_inv)**c)
     )  
-    p_of_x = Distribution(p_of_x, xmin=xmin, xmax=xmax, seed=5) # initialize as distribution object
+    p_of_x = Distribution(p_of_x, xmin=xmin, xmax=xmax, seed=1) # initialize as distribution object
     # Numerically determine maximum to normalize p(x) for sampling:
     # by plotting the distribution, we can see it never exceeds 3: p(x) < 3.
     pmax = 3
@@ -295,8 +295,8 @@ def main():
     binwidths = edges[1:] - edges[:1]
     hist, bin_edges = np.histogram(random_samples, bins=edges)# We are allowed to use np.hist   
     hist = np.array(hist/binwidths, dtype=np.int64)
-    hist_scaled = (hist / (4*np.pi**2 * 100)) #divide out the normalization offset 10000/<Nsat> = 100
-
+    hist_scaled = (hist / (4*np.pi**2 * N_generate/Nsat)) #divide out the normalization offset 10000/<Nsat> = 100
+    # why do i need to divide by an additional 4*np.pi**2 ????
     fig = plt.figure()
     relative_radius = np.geomspace(1e-4, 5, 100) 
     analytical_function = p_of_x(relative_radius)
