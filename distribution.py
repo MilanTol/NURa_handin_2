@@ -43,12 +43,14 @@ class Distribution:
             Values sampled from dist, shape (Nsamples,)
         """        
         samples = []
-        for i in range(N_samples):
+        samples_collected = 0
+        while samples_collected < N_samples:
             x = self.rng.float((self.xmin, self.xmax)) #randomly draw an x in between bounds
             y = self.rng.float((0, pmax)) #draw a y in between 0 and pmax
             dist_val = self.dist(x, *self.args)
             if y < dist_val:
                 samples.append(x)
+                samples_collected += 1
         return np.array(samples)
 
 
