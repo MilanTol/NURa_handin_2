@@ -275,7 +275,12 @@ def main():
     # 1d)
     x_to_eval = 1
     func_to_eval = lambda x: n(x, A, Nsat, a, b, c)
-    dn_dx_numeric = ridders_derivative(func_to_eval, x_to_eval, h_init=0.5, d=2, eps=1e-4, max_iters=10)
+    # for the numeric derivative we set the target error really high 
+    # and also the max iterations to really high, so that we only stop once 
+    # we reach round-off error territory
+    dn_dx_numeric = ridders_derivative(
+        func_to_eval, x_to_eval, h_init=0.5, d=2, eps=1e-30, max_iters=30
+        )
     dn_dx_analytic = dn_dx(x_to_eval, A, Nsat, a, b, c)
     with open("Calculations/satellite_deriv_analytic.txt", "w") as f:
         f.write(f"{dn_dx_analytic:.20g}\n")

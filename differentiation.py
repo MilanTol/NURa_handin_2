@@ -85,7 +85,7 @@ def ridders_derivative(
             ) #update D
         
         temp_err = np.abs(D[j] - D[j-1]) # compute of current iteration
-        if temp_err < err: # if error grows, ignore
+        if temp_err < err: # if error shrinks we update
             err = temp_err
             best = D[j]
             if err < np.abs(eps*best): # check whether relative error is smaller than target 
