@@ -43,7 +43,7 @@ def logspace_integrand(
     u: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
 ) -> float | np.ndarray:
     """
-    The integrand as described in eq. 5 in the text. 
+    The integrand as described in eq. 4 in the text. 
 
     Parameters
     ----------
@@ -66,7 +66,7 @@ def logspace_integrand(
         Same type and shape as x. Number density of satellite galaxies
         at given radius x.
     """
-    return 4*np.pi * b**(3-a) * A*Nsat * np.exp(a*u - np.exp(c*u)*b**-c) #see eq. 5
+    return 4*np.pi * b**(3-a) * A*Nsat * np.exp(a*u - np.exp(c*u)*b**-c) #see eq. 4
 
 
 #### Sorting block ####
@@ -189,22 +189,16 @@ def main():
     bounds = (1e-5, 5)
 
     log_bounds = np.log(bounds) #convert the bounds to log bounds since we integrate in logspace
-    integrand = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c) #use logspace integrand
+    #use logspace integrand
+    integrand = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c) 
     integral, err = romberg_integrator(
         integrand, log_bounds, order=7, args=(a, b, c), err=True
     )
-    print(integral, err)
 
-    # Normalisation
+    # we can now compute A:
     A = Nsat/integral  
-    print("A", A)
 
-    integrand = lambda u, a, b, c: logspace_integrand(u, A=A, Nsat=Nsat, a=a, b=b, c=c)
-    integrated_Nsat, err = romberg_integrator(
-        integrand, np.log([1e-5, 5]), order=7, args=(a, b, c), err=True
-    )
-    print(integrated_Nsat, err)
-
+    #store compute result
     with open("Calculations/satellite_A.txt", "w") as f:
         f.write(f"{A:.12g}\n")
 
@@ -219,6 +213,7 @@ def main():
         lambda x: 4*np.pi * b**2 * A*(x*b_inv)**(a-1) * np.exp(-(x*b_inv)**c)
     )  
     p_of_x = Distribution(p_of_x, xmin=xmin, xmax=xmax, seed=1) # initialize as distribution object
+
     # Numerically determine maximum to normalize p(x) for sampling:
     # by plotting the distribution, we can see it never exceeds 3: p(x) < 3.
     pmax = 3
@@ -227,9 +222,12 @@ def main():
     edges = np.geomspace(xmin, xmax, 21)
     binwidths = edges[1:] - edges[:1]
     hist, bin_edges = np.histogram(random_samples, bins=edges)# We are allowed to use np.hist   
-    hist = np.array(hist/binwidths, dtype=np.int64)
-    hist_scaled = (hist / (4*np.pi**2 * N_generate/Nsat)) #divide out the normalization offset 10000/<Nsat> = 100
+    hist = np.array(hist/binwidths, dtype=np.float64)
+
+    #divide out the normalization offset 10000/<Nsat> = 100
+    hist_scaled = (hist / (4*np.pi**2 * N_generate/Nsat)) 
     # why do i need to divide by an additional 4*np.pi**2 ????
+
     fig = plt.figure()
     relative_radius = np.geomspace(1e-4, 5, 100) 
     analytical_function = p_of_x(relative_radius)
@@ -251,7 +249,7 @@ def main():
     )
     ax.legend()
     plt.savefig("Plots/my_solution_1b.png", dpi=600)
-
+    exit()
     # 1c
     rng = RNG(seed=3) #instantiate RNG object for choice function
     chosen = choice(random_samples, rng, 100)
