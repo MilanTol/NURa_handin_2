@@ -165,8 +165,14 @@ def dn_dx(
         Same type and shape as x. Derivative of number density of
         satellite galaxies at given radius x.
     """
-    # TODO: Write the analytical derivative of n(x) here
-    return 0.0
+    b_inv = 1/b
+    xb_inv = x*b_inv
+    return (
+        A*Nsat*b_inv * 
+        (xb_inv)**(a-4) * 
+        np.exp(-(xb_inv)**c) *
+        ((a-3) - c(xb_inv)**c)
+        )
 
 
 def finite_difference(
@@ -189,18 +195,16 @@ def finite_difference(
     dy : float | ndarray
         Derivative at x
     """
-    # TODO: Implement finite difference method
-    return 0.0
+    return 1/(2*h) * (function(x+h) - function(x-h))
 
 
-def compute_derivative(
+def ridders_derivative(
     function: callable,
     x: float | np.ndarray,
     h_init: float,
-    # For Ridders use parameters below:
-    # d: float, # Factor by which to decrease h_init every iteration
-    # eps: float, # Relative error
-    # max_iters: int = 10, 3 Maximum number of iterations before exiting
+    d: float, 
+    eps: float, 
+    max_iters: int = 10, 
 ) -> float | np.ndarray:
     """
     Function to compute derivative
@@ -213,13 +217,18 @@ def compute_derivative(
         Value(s) to evaluate derivative at
     h_init : float
         Initial step size for finite difference
+    d: float
+        Factor by which to decrease h_init every iteration
+    eps: float
+        Target relative error
+    max_iters: int (standard = 10)
+        maximum number of iterations before exiting
 
     Returns
     -------
     df : float | ndarray
         Derivative at x
     """
-    # TODO: Implement derivative
     return 0.0
 
 

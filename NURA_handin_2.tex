@@ -59,10 +59,6 @@ mention what conclusions you draw from them!}
 \section{Satellite galaxies around a massive central}
 
 \subsection{(1a) Determining the normalization}
-
-Explain the integration method used (e.g. Romberg integration or another Richardson method).  
-Describe how you implemented the spherical volume element \(dV\).
-
 We will first solve the integral 
 \begin{equation}
 \int \int \int_V n(x) dV.
@@ -78,61 +74,27 @@ does not depend on $\theta$ and  $\phi$. Using spherical coordinates turns this 
 1-dimensional integral which is a lot easier to solve numerically. 
 The integral then becomes
 \begin{equation}
-4\pi\int_{10^{-5}}^5 
+4\pi b^2\int_{10^{-5}}^5 
 A \langle N_\mathrm{sat} \rangle 
-\left( \frac{x}{b}\right)^{a-3}
+\left( \frac{x}{b}\right)^{a-1}
 \exp\left[-\left(\frac{x}{b}\right)^c\right]
-x^2 dx.
+dx.
 \end{equation}
 We will use Romberg integration as our method of numeric integration.
 Romberg integration is a lot more accurate if the function is close to linear,
 Since it uses evenly spaced samples and trapezoid to approximate the function. 
-We split up the integral into 2 parts:
-\begin{equation}
-4\pi\int_{10^{-5}}^b 
-n(x)
-x^2 dx.
-+ 
-4\pi\int_{b}^5
-n(x)
-x^2 dx.
-\end{equation}
-In the first integral the $\left(\frac{x}{b}\right)$ term varies most rapidly. While in the second the exponential dominates the change in value of the integrand.  
-For the first integral we rewrite the integral into an integral over logspace, as this makes sure the inner region of the profile, which contributes the most, gets a sufficient amount of samples.
-So we make the substitution $u \equiv \mathrm{ln}x$, $du \equiv 1/x dx$
+We rewrite the integral into an integral over logspace, as this makes sure the inner region of the profile, which contributes the most, gets a sufficient amount of samples.
+So we make the substitution $u \equiv \mathrm{ln}x$, $\exp(u)du \equiv dx$
 and rewrite the integral to:
 \begin{equation}
-4\pi b^{3 - a}\int_{\ln(10^{-5})}^{\ln(b)} 
+4\pi b^{3 - a}\int_{\ln(10^{-5})}^{\ln(5)} 
 A \langle N_\mathrm{sat} \rangle 
 \exp\left(au
 -\frac{\exp(cu)}{b^c}\right)
 du.
 \end{equation}
-For the second integral we rewrite the integrand using the substitution 
-$q \equiv \exp[(-x/b)^c]$, $dx = -\frac{b}{c}\left( \frac{x}{b}\right)^{1-c} dq$, $x=-b(\ln q)^{-c}$:
-\begin{equation}
--4\pi\int_{\exp(-1)}^{\exp[-(5/b)^c]}
-A \langle N_\mathrm{sat} \rangle 
-\frac{b}{c}\left( \ln q\right)^{q-2c}
-q
-\;dq.
-\end{equation}
 
-\begin{table}[H]
-\centering
-\caption{Normalization constant of the satellite galaxy profile.}
-\begin{tabular}{|c|}
-\hline
-Normalization constant \(A\) \\
-\hline
-\input{\CalcDir/satellite_A.txt} \\
-\hline
-\end{tabular}
-\end{table}
 
-\subsection{Code for the integrator}
-
-\lstinputlisting[language=Python]{\CodeDir/satellites_integrator_code.txt}
 
 \subsection{(1b) Sampling the satellite distribution}
 
@@ -145,7 +107,7 @@ So $N(x) = 4\pi x^2 n(x)$ from which we find that
 \begin{equation}
   p(x)dx = \frac{4\pi x^2}{ \langle N_\mathrm{sat}\rangle } n(x) dx.
 \end{equation}
-Fillin in $n(x)$:
+Filling in $n(x)$:
 \begin{equation}
   p(x)dx = 
   4\pi b^2
@@ -167,6 +129,8 @@ Does your sampled distribution agree with the analytical prediction?
 
 \lstinputlisting[language=Python]{\CodeDir/satellites_sampling_code.txt}
  
+
+
 \subsection{(1c) Selecting and sorting satellites}
 
 Describe the selection of 100 galaxies (equal probability, no duplicates, no rejection).
@@ -182,7 +146,20 @@ Explain the sorting algorithm you used.
 
 \lstinputlisting[language=Python]{\CodeDir/satellites_selection_code.txt}
 
+
+
 \subsection{(1d) Numerical derivative}
+
+The analytic expression for the derivative is given by
+\begin{equation}
+\frac{dn}{dx} = 
+\frac{A\langle N_\mathrm{sat} \rangle}{b}
+\left[
+  (a-3)\left(\frac{x}{b}\right)^{a-4} 
+ - c\left(\frac{x}{b}\right)^{a+c-4}
+\right]
+\exp[-\left(\frac{x}{b}\right)^c].
+\end{equation}
 
 \begin{table}[H]
 \centering
