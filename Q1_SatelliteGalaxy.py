@@ -249,7 +249,7 @@ def main():
     )
     ax.legend()
     plt.savefig("Plots/my_solution_1b.png", dpi=600)
-    exit()
+    
     # 1c
     rng = RNG(seed=3) #instantiate RNG object for choice function
     chosen = choice(random_samples, rng, 100)
