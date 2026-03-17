@@ -146,8 +146,8 @@ Does your sampled distribution agree with the analytical prediction? How much sa
 Describe the selection of 100 galaxies (equal probability, no duplicates, no rejection).
 Explain the sorting algorithm you used.
 
-I select 100 galaxies from the N samples obtained in question 1b) 
-by employing the Fisher-Yates Shuffle algorithm (see \hyperref{https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle}).
+I select 100 galaxies from the N samples obtained in question 1b
+by employing the Fisher-Yates Shuffle algorithm (see wikipedia.org/Fisher_Yates_shuffle).
 This algorithm works as follows:
 \begin{itemize}
 \item set N equal to the length of the array
@@ -167,7 +167,8 @@ At no point during this algorithm do we reject a drawn index.
 So this algorithm satisfies the requirements equal probability, no duplicates, and no rejection.
 
 We proceed to sort the selected galaxies based on the distance from the central.
-For this we use the quicksort algorithm. This sorting algorithm is implemented inside the Sorter class.
+For this we use the quicksort algorithm. We do not need a stable algorithm. 
+This sorting algorithm is implemented inside the Sorter class.
 It is divided up into two big blocks of code. The first block sorts an array \textbf{without} bookkeeping an index array 
 on the side as well.
 The second block does to the bookkeeping and then returns and index array as well.
