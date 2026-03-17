@@ -219,7 +219,7 @@ def main():
 
     # store compute result
     with open("Calculations/satellite_A.txt", "w") as f:
-        f.write(rf"{A:.12g} $\pm$ {err_A}\n")
+        f.write(rf"{A:.12g} $\pm$ {err_A:.6g}\n")
 
     # to go from n(x) to N(x) we can use that
     # n(x)dV = 4*np.pi*x**2 * n(x)dx = N(x)dx
