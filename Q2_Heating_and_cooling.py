@@ -150,7 +150,7 @@ def main():
         # plt.ylim(-1e3, 1e3)
         plt.legend()
         # plt.savefig("Plots/contributions_2a.png", dpi=600)
-        #plt.show()
+        # plt.show()
         plt.close()
 
         root1, aerr1, rerr1, iters1 = bisection(
