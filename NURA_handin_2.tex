@@ -81,9 +81,10 @@ A \langle N_\mathrm{sat} \rangle
 dx.
 \end{equation}
 We will use Romberg integration as our method of numeric integration.
-Romberg integration is a lot more accurate if the function is close to linear,
-Since it uses evenly spaced samples and trapezoid to approximate the function. 
-We rewrite the integral into an integral over logspace, as this makes sure the inner region of the profile, which contributes the most, gets a sufficient amount of samples.
+Romberg integration is a lot more accurate if the function does not vary rapidly,
+as it uses evenly spaced samples and trapezoid to approximate the function. 
+We rewrite the integral into an integral over logspace, as this makes sure the inner region of the profile, 
+where the function varies the most and the region which contributes the most, gets a sufficient amount of samples.
 So we make the substitution $u \equiv \mathrm{ln}x$, $\exp(u)du \equiv dx$
 and rewrite the integral to:
 \begin{equation}
@@ -94,7 +95,12 @@ A \langle N_\mathrm{sat} \rangle
 du.
 \end{equation}
 
+We solve the integral first by using $A=1$. We can then rescale the solution so that it equals $\langle N_\mathrm{sat} \rangle$
+since it is linear in A. In other words, solve the integral for $A=1$, then $A = N_\mathrm{sat} / \mathrm{integral}$.
 
+We find:
+\input{Calculations/satellite_A.txt}
+\hline
 
 \subsection{(1b) Sampling the satellite distribution}
 
@@ -186,6 +192,14 @@ Do your analytical and numerical derivatives agree? Why?
 \subsection{(2a) Photoionization heating and radiative recombination cooling}
 
 Describe the implementation of your root-finding method (e.g. bisection, Newton-Raphson).
+
+We have a function of the form:
+\begin{equation}
+  f(T) = A - BT + CT\ln (DT),
+\end{equation}
+where A, B, C, D are independent of T. We are looking for $T \in [1, 10^7]\mathrm{K}$ such that $f(T) = 0$.
+We can plot the contributions of each of these terms to $f(T)$ to see which are dominant in which regimes.
+
 
 \begin{table}[H]
 \centering

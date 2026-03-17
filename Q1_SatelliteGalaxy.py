@@ -190,7 +190,7 @@ def main():
 
     log_bounds = np.log(bounds) #convert the bounds to log bounds since we integrate in logspace
     #use logspace integrand
-    integrand = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c) 
+    integrand = lambda u, a, b, c: logspace_integrand(u, A=1, Nsat=Nsat, a=a, b=b, c=c) # use A=1 for now.
     integral, err = romberg_integrator(
         integrand, log_bounds, order=7, args=(a, b, c), err=True
     )
