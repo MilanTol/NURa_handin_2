@@ -64,9 +64,8 @@ def main():
     plt.ylim(-1e7, 1e9)
     plt.legend()
     plt.savefig("Plots/contributions_2a.png", dpi=600)
-    plt.show()
+    plt.close()
 
-    exit()
     root, aerr, rerr = 0.0, 0.0, 0.0  # replace with your root finder
 
     with open("Calculations/equilibrium_temp_simple.txt", "w") as f:
