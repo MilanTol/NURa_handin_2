@@ -73,9 +73,14 @@ def main():
     func = lambda T: equilibrium1(T, Z, Tc, psi)
     deriv = lambda T: equilibrium1_deriv(T, Z, Tc, psi)
 
-    root1, aerr1, rerr1, iters1 = false_position(func, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True) 
+    root1, aerr1, rerr1, iters1 = bisection(func, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True) 
     print("iterations needed to find root using improved false_position:", iters1)
     print(root1, aerr1, rerr1)
+
+    root2, aerr2, rerr2, iters2 = false_position(func, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True) 
+    print("iterations needed to find root using improved false_position:", iters2)    
+    print(root2, aerr2, rerr2)
+
     root, aerr, rerr, iters = improved_newton_raphson(func, deriv, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True) 
     print("iterations needed to find root using improved newton raphson:", iters)
 

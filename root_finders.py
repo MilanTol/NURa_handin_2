@@ -7,6 +7,7 @@ def bisection(
     atol: float = 1e-6,
     rtol: float = 1e-6,
     max_iters: int = 100,
+    return_iters: bool = False
 ) -> tuple[float, float, float]:
     """
     Find a root of a function using bisection
@@ -58,14 +59,16 @@ def bisection(
         c = 0.5 * (a + b)  # find new c
         Delta *= 0.5  # bisection always decreases bracket width by factor 0.5
         if Delta < atol:
-            break
+            if return_iters:
+                return c, Delta, Delta / c, i+1
+            return c, Delta, Delta / c
+        
         if Delta < rtol * c:
-            break
+            if return_iters:
+                return c, Delta, Delta / c, i+1            
+            return c, Delta, Delta / c
 
-    if i == max_iters:
-        raise Warning("requested tolerance not reached")
-
-    return c, Delta, Delta / c
+    raise Exception("requested tolerance not reached")
 
 
 def false_position(
@@ -282,7 +285,6 @@ def improved_newton_raphson(
                 return c, Delta, Delta / c, i+1
             return c, Delta, Delta / c
         
-        print(np.abs(f_a - f_b) / np.abs(a - b))
         if np.abs(f_a - f_b) > np.abs(a - b): #check how quickly f varies
             break #if it varies sufficiently, then switch to newton raphson instead
     
