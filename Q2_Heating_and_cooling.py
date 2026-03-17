@@ -84,24 +84,27 @@ def main():
 
     func = lambda T: equilibrium1(T, Z, Tc, psi)
     deriv = lambda T: equilibrium1_deriv(T, Z, Tc, psi)
-
-    root1, aerr1, rerr1, iters1 = bisection(func, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True) 
-    print("iterations needed to find root using bisection:", iters1)
-    print(root1, aerr1, rerr1)
-    print(0.001*timeit(lambda: bisection(func, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True), number=1000))
-
-    root2, aerr2, rerr2, iters2 = false_position(func, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True) 
-    print("iterations needed to find root using false_position:", iters2)    
-    print(root2, aerr2, rerr2)
-    print(0.001*timeit(lambda: false_position(func, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True), number=1000))
     
-    root, aerr, rerr, iters = improved_newton_raphson(func, deriv, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True) 
-    print("iterations needed to find root using improved newton raphson:", iters)
-    print(root, aerr, rerr)
-    print(0.001*timeit(lambda: improved_newton_raphson(func, deriv, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True), number=1000))
+    # I test the time it takes to run by using 1000 runs, then divide by 1000 to get the average runtime
 
-    with open("Calculations/equilibrium_temp_simple.txt", "w") as f:
-        f.write(f"{root:.12g} & {aerr:.3e} & {rerr:.3e}")
+    root1, aerr1, rerr1, iters1 = bisection(func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True) 
+    time1 = 0.001*timeit(lambda: bisection(func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True), number=1000)
+
+    root2, aerr2, rerr2, iters2 = false_position(func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True) 
+    time2 = 0.001*timeit(lambda: false_position(func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True), number=1000)
+    
+    root3, aerr3, rerr3, iters3 = improved_newton_raphson(func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True) 
+    time3 = 0.001*timeit(lambda: improved_newton_raphson(func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True), number=1000)
+
+    with open("Calculations/equilibrium_temp_simple_bisection.txt", "w") as f:
+        f.write(f"{root1:.12g} & {aerr1:.3e} & {rerr1:.3e} & {iters1} & {time1}")
+
+    with open("Calculations/equilibrium_temp_simple_false_position.txt", "w") as f:
+        f.write(f"{root2:.12g} & {aerr2:.3e} & {rerr2:.3e} & {iters2} & {time2}")
+    
+    with open("Calculations/equilibrium_temp_simple_newton_raphson.txt", "w") as f:
+        f.write(f"{root3:.12g} & {aerr3:.3e} & {rerr3:.3e} & {iters3} & {time3}")
+
 
     #### 2b ####
 
@@ -109,8 +112,6 @@ def main():
     bracket = (1, 1e15)
 
     for nH in [1e-4, 1, 1e4]:
-
-        root, aerr, rerr = 0.0, 0.0, 0.0  # replace with your root finder
 
         func = lambda T: equilibrium2(T, Z, Tc, psi, nH, A, xi, aB)
         deriv = lambda T: equilibrium2_deriv(T, Z, nH, aB)
@@ -134,19 +135,13 @@ def main():
         plt.show()
 
         root1, aerr1, rerr1, iters1 = bisection(func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True) 
-        print("iterations needed to find root using bisection:", iters1)
-        print(root1, aerr1, rerr1)
-        print(0.001*timeit(lambda: bisection(func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True), number=1000))
+        time1 = 0.001*timeit(lambda: bisection(func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True), number=1000)
 
-        # root2, aerr2, rerr2, iters2 = false_position(func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True) 
-        # print("iterations needed to find root using false_position:", iters2)    
-        # print(root2, aerr2, rerr2)
-        # print(0.001*timeit(lambda: false_position(func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True), number=1000))
+        root2, aerr2, rerr2, iters2 = false_position(func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True) 
+        time2 = 0.001*timeit(lambda: false_position(func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True), number=1000)
         
-        root, aerr, rerr, iters = improved_newton_raphson(func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True) 
-        print("iterations needed to find root using improved newton raphson:", iters)
-        print(root, aerr, rerr)
-        print(0.001*timeit(lambda: improved_newton_raphson(func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True), number=1000))
+        root3, aerr3, rerr3, iters3 = improved_newton_raphson(func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True) 
+        time3 = 0.001*timeit(lambda: improved_newton_raphson(func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True), number=1000)
 
         if nH == 1e-4:
             with open("Calculations/equilibrium_low_density.txt", "w") as f:

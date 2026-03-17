@@ -261,7 +261,24 @@ We have a function of the form:
   f(T) = A - BT + CT\ln (DT),
 \end{equation}
 where A, B, C, D are independent of T. We are looking for $T \in [1, 10^7]\mathrm{K}$ such that $f(T) = 0$.
-We can plot the contributions of each of these terms to $f(T)$ to see which are dominant in which regimes.
+I test a few root-finding algorithms: Bisection, false position, and Newton-Raphson. 
+For each algorithm I will test the number of iterations required, the time it took to run, and compare their results.
+
+Bisection iteratively splits up a bracket in half and checks which of the two subintervals contain the root. 
+It is super consistent, but usually not the fastest. 
+It does not take any information from the slope or values of the functions that it finds along the way. 
+False position does take into account the values of the function. It uses these to linearly approximate the function
+and from this approximation deduce where the root would be. If the estimated root falls outside the initial bracket,
+it resorts to bisection instead. 
+Lastly, we have Newton-Raphson. An exremely unstable, but potentially really fast algorithm which uses 
+the analytic expression for the derivative of the function in question and uses a starting point rather than a bracket. 
+In this scenario it is so unstable that it does not converge for most starting values.
+Newton-Raphson requires the function to be sufficiently close to linear. 
+Also if the second derivative and first derivative have equal sign for a point, this usually means
+that Newton-Raphson will fail as it overshoots. 
+In order for this method to be effective, the starting point needs to be \textit{sufficiently} close to the true root.
+That is why I instead use an improved Newton-Raphson method: I approach the root using false position,
+then I switch to Newton-Raphson if the function varies sufficiently in a small enough bracket.
 
 
 \begin{table}[H]
@@ -269,9 +286,11 @@ We can plot the contributions of each of these terms to $f(T)$ to see which are 
 \caption{Equilibrium temperature for the simplified heating–cooling model.}
 \begin{tabular}{|c|c|c|}
 \hline
-Temperature [K] & Absolute error & Relative error \\
+Temperature [K] & Absolute error & Relative error & Number of iterations & time to complete \\
 \hline
-\input{\CalcDir/equilibrium_temp_simple.txt}
+\input{\CalcDir/equilibrium_temp_simple_bisection.txt}
+\input{\CalcDir/equilibrium_temp_simple_false_position.txt}
+\input{\CalcDir/equilibrium_temp_simple_newton_raphson.txt}
 \\
 \hline
 \end{tabular}
