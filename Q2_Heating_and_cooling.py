@@ -96,21 +96,21 @@ def main():
     )
 
     root2, aerr2, rerr2, iters2 = false_position(
-        func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+        func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
     )
     time2 = 0.001 * timeit(
         lambda: false_position(
-            func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+            func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
         ),
         number=1000,
     )
 
     root3, aerr3, rerr3, iters3 = improved_newton_raphson(
-        func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+        func, deriv, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
     )
     time3 = 0.001 * timeit(
         lambda: improved_newton_raphson(
-            func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+            func, deriv, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
         ),
         number=1000,
     )
