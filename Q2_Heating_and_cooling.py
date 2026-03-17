@@ -6,7 +6,7 @@ from root_finders import bisection, false_position, newton_raphson
 # Constants (mind the units!)
 
 psi = 0.929
-Tc = 1e4 # K
+Tc = 1e4  # K
 Z = 0.015
 k = 1.38e-16  # erg/K
 aB = 2e-13  # cm^3 / s
@@ -15,12 +15,16 @@ xi = 1e-15
 
 
 # There's no need for nH nor ne as they cancel out
-def equilibrium1(T, Z, Tc, psi): # there is no need for the k either as it cancels out as well
-    return psi * Tc - ( 0.684 - 0.0416 * np.log( T / (1e4 * Z*Z) ) ) * T
+def equilibrium1(
+    T, Z, Tc, psi
+):  # there is no need for the k either as it cancels out as well
+    return psi * Tc - (0.684 - 0.0416 * np.log(T / (1e4 * Z * Z))) * T
 
-term1 = lambda T: psi*Tc*np.ones_like(T)
-term2 = lambda T: -0.684*T
-term3 = lambda T: 0.0416 * np.log(T/(1e4*Z*Z)) * T
+
+term1 = lambda T: psi * Tc * np.ones_like(T)
+term2 = lambda T: -0.684 * T
+term3 = lambda T: 0.0416 * np.log(T / (1e4 * Z * Z)) * T
+
 
 def equilibrium2(T, Z, Tc, psi, nH, A, xi, aB):
     return (
@@ -43,7 +47,6 @@ def equilibrium2(T, Z, Tc, psi, nH, A, xi, aB):
 #     return 0.0
 
 
-
 def main():
 
     # Initial bracket
@@ -54,10 +57,10 @@ def main():
 
     plt.plot(T_vals, y_vals, label=r"$f(T)$")
     plt.plot(T_vals, term1(T_vals), label=r"$A$")
-    plt.plot(T_vals, term2(T_vals), label=r'$-BT$')
-    plt.plot(T_vals, term3(T_vals), label=r'$CT\ln (DT)$')
-    plt.xscale('log')
-    plt.yscale('symlog', linthresh=10)
+    plt.plot(T_vals, term2(T_vals), label=r"$-BT$")
+    plt.plot(T_vals, term3(T_vals), label=r"$CT\ln (DT)$")
+    plt.xscale("log")
+    plt.yscale("symlog", linthresh=10)
     plt.ylim(-1e7, 1e9)
     plt.legend()
     plt.savefig("Plots/contributions_2a.png", dpi=600)
