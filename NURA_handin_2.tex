@@ -129,6 +129,7 @@ Filling in $n(x)$:
 \centering
 \includegraphics[width=0.85\textwidth]{\PlotDir/my_solution_1b.png}
 \caption{Comparison between the analytical satellite distribution \(N(x)\) and the histogram of 10 000 sampled satellite galaxies in logarithmic bins.}
+\label{fig: probability distribution satellites}
 \end{figure}
 
 Does your sampled distribution agree with the analytical prediction? How much samples are thrown away because of rejection sampling?
@@ -167,12 +168,42 @@ So this algorithm satisfies the requirements equal probability, no duplicates, a
 
 We proceed to sort the selected galaxies based on the distance from the central.
 For this we use the quicksort algorithm. This sorting algorithm is implemented inside the Sorter class.
+It is divided up into two big blocks of code. The first block sorts an array \textbf{without} bookkeeping an index array 
+on the side as well.
+The second block does to the bookkeeping and then returns and index array as well.
+I have separated this into two big blocks instead of doing the if statements inside the for loops because 
+I dont want the number of if statement checks that depend on the length of the array. This safes us a lot of operations
+especially for larger arrays.
 
+First the algorithm checks if the array is length 1. In this case it is trivially sorted.
+Then the algorithm checks if the array is length 2 and sorts it if necessary.
+For larger arrays, the quicksort part comes into play.
+We choose a pivot index halfway inside the array $(i_\mathrm{pivot} = N//2)$.
+We sort the first, pivot, and last element of the array. Which requires 3 if statements at least.
+Redefine the pivot element to be the element that is currently located at the pivot index.
+
+We now initiate a for loop which will increase an index i from 0 to the pivot index while also 
+decreasing an index j from N-1 to the pivot index (here N is the length of the array).
+We keep track whether the ith (and jth) element are greater (smaller) than the pivot element. 
+If i (or j) satisfies this condition, we stop increasing i (or stop decreasing j).
+if both i and j are locked, we swap the ith and jth element and unlock both i and j.
+We also include an if statement to make sure that i (j) can never exceed (subceed) the pivot index.
+We continue until i=j. Then all the elements left of the pivot are smaller than the pivot, and all the elements to 
+the right of the pivot are greater than the pivot.
+We now call the quicksort algorithm on the two subarrays left and right from the pivot. 
+When keeping track of an indexing array, we simply do all the swaps on an arange array of length N as well.
+
+In Figure \ref{fig: cumulative number of satellites} we plot the cumulative number of the 100 selected samples
+as a function of radius. We see that the steepest increase in the plot is right where the probability distribution 
+in \ref{fig: probability distribution satellites} attains its maximum. This is indeed what we expect.
+Due to the small number of samples (100) we do not get any information on the cumulative distribution
+in the regimes where the probability distribution is small.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{\PlotDir/my_solution_1c.png}
 \caption{Cumulative number of selected galaxies as a function of relative radius.}
+\label{fig: cumulative number of satellites}
 \end{figure}
 
 \subsubsection{Code for selection}
@@ -184,7 +215,7 @@ For this we use the quicksort algorithm. This sorting algorithm is implemented i
 
 \subsection{(1d) Numerical derivative}
 
-The analytic expression for the derivative is given by
+The analytic expression for the derivative of the number density as function of scaled radius $x$ is given by
 \begin{equation}
 \frac{dn}{dx} = 
 \frac{A\langle N_\mathrm{sat} \rangle}{b}
