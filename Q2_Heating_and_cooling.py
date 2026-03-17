@@ -18,7 +18,7 @@ xi = 1e-15
 def equilibrium1(T, Z, Tc, psi): # there is no need for the k either as it cancels out as well
     return psi * Tc - ( 0.684 - 0.0416 * np.log( T / (1e4 * Z*Z) ) ) * T
 
-term1 = lambda T: psi*Tc
+term1 = lambda T: psi*Tc*np.ones_like(T)
 term2 = lambda T: -0.684*T
 term3 = lambda T: 0.0416 * np.log(T/(1e4*Z*Z)) * T
 
@@ -43,24 +43,23 @@ def equilibrium2(T, Z, Tc, psi, nH, A, xi, aB):
 #     return 0.0
 
 
-#### root finder ####
-
-
 
 def main():
 
     # Initial bracket
     bracket = (1, 1e7)
 
-    T_vals = np.geomspace(1, 1e20, 300)
+    T_vals = np.geomspace(1, 1e7, 300)
     y_vals = equilibrium1(T=T_vals, Z=Z, Tc=Tc, psi=psi)
 
-    plt.plot(T_vals, y_vals, r'$f(T)$')
+    plt.plot(T_vals, y_vals, label=r"$f(T)$")
     plt.plot(T_vals, term1(T_vals), label=r"$A$")
     plt.plot(T_vals, term2(T_vals), label=r'$-BT$')
     plt.plot(T_vals, term3(T_vals), label=r'$CT\ln (DT)$')
     plt.xscale('log')
-    plt.yscale('symlog', linthresh=1e-16)
+    plt.yscale('symlog', linthresh=10)
+    plt.ylim(-1e7, 1e9)
+    plt.legend()
     plt.savefig("Plots/contributions_2a.png", dpi=600)
     plt.show()
 
