@@ -9,6 +9,7 @@ from sorter import Sorter
 from differentiation import ridders_derivative
 from selection import choice
 
+
 def n(
     x: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
 ) -> float | np.ndarray:
@@ -70,8 +71,6 @@ def logspace_integrand(
     return (
         4 * np.pi * b ** (3 - a) * A * Nsat * np.exp(a * u - np.exp(c * u) * b**-c)
     )  # see eq. 4
-
-
 
 
 ##### Derivative block #####
@@ -216,7 +215,9 @@ def main():
 
     # Cumulative plot of the chosen galaxies (1c)
     fig1c, ax = plt.subplots()
-    ax.plot(sorted_chosen, np.arange(100) + 1) #add one since arange goes from 0 to 99 and y axis gives cumulative number of galaxies
+    ax.plot(
+        sorted_chosen, np.arange(100) + 1
+    )  # add one since arange goes from 0 to 99 and y axis gives cumulative number of galaxies
     ax.set(
         xscale="log",
         xlabel="Relative radius",

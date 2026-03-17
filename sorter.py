@@ -103,7 +103,9 @@ class Sorter:
             self.sorted_arr = arr  # store the sorted array
             return arr
 
-        if make_indx:  # same procedure as above, except we also keep track of swaps with an index array
+        if (
+            make_indx
+        ):  # same procedure as above, except we also keep track of swaps with an index array
             indx = np.arange(N)  # create indexing array
             if N == 1:
                 return arr, indx

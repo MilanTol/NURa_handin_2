@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def choice(
     arr: np.ndarray,
     rng: RNG,
