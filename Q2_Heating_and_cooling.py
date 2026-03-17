@@ -116,13 +116,13 @@ def main():
     )
 
     with open("Calculations/equilibrium_temp_simple_bisection.txt", "w") as f:
-        f.write(f"{root1:.12g} & {aerr1:.3e} & {rerr1:.3e} & {iters1} & {time1}")
+        f.write(f"Bisection & {root1:.12g} & {aerr1:.3e} & {rerr1:.3e} & {iters1} & {time1}")
 
     with open("Calculations/equilibrium_temp_simple_false_position.txt", "w") as f:
-        f.write(f"{root2:.12g} & {aerr2:.3e} & {rerr2:.3e} & {iters2} & {time2}")
+        f.write(f"False position & {root2:.12g} & {aerr2:.3e} & {rerr2:.3e} & {iters2} & {time2}")
 
     with open("Calculations/equilibrium_temp_simple_newton_raphson.txt", "w") as f:
-        f.write(f"{root3:.12g} & {aerr3:.3e} & {rerr3:.3e} & {iters3} & {time3}")
+        f.write(f"Newton-Raphson {root3:.12g} & {aerr3:.3e} & {rerr3:.3e} & {iters3} & {time3}")
 
     #### 2b ####
 
