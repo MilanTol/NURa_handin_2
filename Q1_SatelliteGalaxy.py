@@ -150,19 +150,16 @@ def main():
         f.write(rf"{A:.12g} $\pm$ {err_A:.6g}\n")
 
     # to go from n(x) to N(x) we can use that
-    # n(x)dV = 4*np.pi*x**2 * n(x)dx = N(x)dx
-    # so we obtain: N(x) = 4*np.pi*x**2 n(x)
-    # thus p(x)dx = 4*np.pi/Nsat*x**2 n(x) which we can rewrite to
-    # p(x)dx = 4*np.pi/Nsat * x**2 * A * Nsat * (x/b)**(a-3) * np.exp(-(x*b)**c)
-    # = 4*np.pi*b**2 * A (x/b)**(a-1) * np.exp(-(x*b)**c)
-    b_inv = 1 / b
+    # n(x)dV = 4*np.pi*Delta_x**2 * n(x)dx = N(x)dx
+    # so we obtain: N(x) = 4*np.pi*Delta_x**2 n(x)
+    # thus p(x)dx = 4*np.pi/Nsat*Delta_x**2 n(x) which we can rewrite to
+    Nsat_inv = 1/Nsat
     p_of_x = (
         lambda x: 4
-        * np.pi
-        * b**2
-        * A
-        * (x * b_inv) ** (a - 1)
-        * np.exp(-((x * b_inv) ** c))
+        * np.pi 
+        * x*x
+        * n(x, A, Nsat, a, b, c) 
+        * Nsat_inv #divide by Nsat
     )
     p_of_x = Distribution(
         p_of_x, xmin=xmin, xmax=xmax, seed=1
@@ -174,30 +171,29 @@ def main():
     random_samples = p_of_x.rejection(N_samples=N_generate, pmax=pmax)
 
     edges = np.geomspace(xmin, xmax, 21)
-    binwidths = edges[1:] - edges[:1]
+    binwidths = edges[1:] - edges[:-1]
     hist, bin_edges = np.histogram(
         random_samples, bins=edges
     )  # We are allowed to use np.hist
     hist = np.array(hist / binwidths, dtype=np.float64)
 
-    # divide out the normalization offset 10000/<Nsat> = 100
-    hist_scaled = hist / (4 * np.pi**2 * N_generate / Nsat)
-    # why do i need to divide by an additional 4*np.pi**2 ????
+    # divide out the number of samples
+    hist_scaled = hist / N_generate * Nsat
 
     fig = plt.figure()
     relative_radius = np.geomspace(1e-4, 5, 100)
-    analytical_function = p_of_x(relative_radius)
+    analytical_function = Nsat * p_of_x(relative_radius) #multiply by number of galaxies
 
     fig1b, ax = plt.subplots()
     ax.stairs(
         hist_scaled, edges=edges, fill=True, label="Satellite galaxies"
-    )  # just an example line, correct this!
+    )  
     plt.plot(
         relative_radius, analytical_function, "r-", label="Analytical solution"
-    )  # correct this according to the exercise!
+    )  
     ax.set(
         xlim=(xmin, xmax),
-        ylim=(10 ** (-3), 50),  # you may or may not need to change ylim
+        ylim=(1e-1, 50*100),  #set lower y lim to 0.1 since bins cant be less than 1 (counts of galaxies)
         yscale="log",
         xscale="log",
         xlabel="Relative radius",
