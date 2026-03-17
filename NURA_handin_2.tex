@@ -98,9 +98,8 @@ du.
 We solve the integral first by using $A=1$. We can then rescale the solution so that it equals $\langle N_\mathrm{sat} \rangle$
 since it is linear in A. In other words, solve the integral for $A=1$, then $A = N_\mathrm{sat} / \mathrm{integral}$.
 
-We find:
+We find: $A = $
 \input{Calculations/satellite_A.txt}
-\hline
 
 \subsubsection{Code for integrating}
 \lstinputlisting[language=Python]{\CodeDir/integration.txt}
@@ -132,7 +131,7 @@ Filling in $n(x)$:
 \caption{Comparison between the analytical satellite distribution \(N(x)\) and the histogram of 10 000 sampled satellite galaxies in logarithmic bins.}
 \end{figure}
 
-Does your sampled distribution agree with the analytical prediction?
+Does your sampled distribution agree with the analytical prediction? How much samples are thrown away because of rejection sampling?
 
 \subsubsection{Code for random number generation}
 \lstinputlisting[language=Python]{\CodeDir/rng.txt}
@@ -146,13 +145,40 @@ Does your sampled distribution agree with the analytical prediction?
 Describe the selection of 100 galaxies (equal probability, no duplicates, no rejection).
 Explain the sorting algorithm you used.
 
+I select 100 galaxies from the N samples obtained in question 1b) 
+by employing the Fisher-Yates Shuffle algorithm (see \hyperref{https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle}).
+This algorithm works as follows:
+\begin{itemize}
+\item set N equal to the length of the array
+\item randomly draw an index: $i \in [0, N-1]$
+\item store the element belonging to this index (the chosen element)
+\item swap the Nth element of the array with the chosen element
+\item Decrease N by 1
+\item repeat until desired number of elements are stored
+\end{itemize}
+
+Step 2 ensures that each galaxy has equal probability of being chosen.
+Step 2, 4 and 5 ensure that there are no duplicates: If a galaxy is drawn,
+then it will be put in the Nth slot of the array, call it M. In the next iterations
+$N < M$ (due to step 5), so then in step 2 we can never have $i = M-1$, so the galaxy can 
+never be selected again.
+At no point during this algorithm do we reject a drawn index. 
+So this algorithm satisfies the requirements equal probability, no duplicates, and no rejection.
+
+We proceed to sort the selected galaxies based on the distance from the central.
+For this we use the quicksort algorithm. This sorting algorithm is implemented inside the Sorter class.
+
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{\PlotDir/my_solution_1c.png}
 \caption{Cumulative number of selected galaxies as a function of relative radius.}
 \end{figure}
 
-\subsubsection{Code for selection and sorting}
+\subsubsection{Code for selection}
+\lstinputlisting[language=Python]{\CodeDir/selection.txt}
+
+\subsubsection{Code for sorting}
 \lstinputlisting[language=Python]{\CodeDir/sorter.txt}
 
 

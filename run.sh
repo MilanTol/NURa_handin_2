@@ -61,6 +61,7 @@ python3 Q1_SatelliteGalaxy.py
 cat integration.py > Code/integration.txt
 cat rng.py > Code/rng.txt
 cat distribution.py > Code/distribution.txt
+cat selection.py > Code/selection.txt
 cat sorter.py > Code/sorter.txt
 cat differentiation.py > Code/differentiation.txt
 cat Q1_SatelliteGalaxy.py > Code/Q1_SatelliteGalaxy.txt
