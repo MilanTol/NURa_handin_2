@@ -7,7 +7,7 @@ from rng import RNG
 from distribution import Distribution
 from sorter import Sorter
 from differentiation import ridders_derivative
-
+from selection import choice
 
 def n(
     x: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
@@ -72,77 +72,6 @@ def logspace_integrand(
     )  # see eq. 4
 
 
-#### Sorting block ####
-
-
-def sort_array(
-    arr: np.ndarray,
-    inplace: bool = False,
-) -> np.ndarray:
-    """
-    Sort a 1D array using a sorting algorithm of your choice
-
-    Parameters
-    ----------
-    arr : ndarray
-        Input array to be sorted
-    inplace : bool, optional
-        If True, sort the array in-place
-        If False, return a sorted copy
-
-    Returns
-    -------
-    sorted_arr : ndarray
-        Sorted array (same shape as arr)
-
-    """
-    if inplace:
-        sorted_arr = arr
-    else:
-        sorted_arr = arr.copy()
-
-    # TODO: sort sorted_arr in-place here
-
-    return sorted_arr
-
-
-def choice(
-    arr: np.ndarray,
-    rng: RNG,
-    size: int = 1,
-) -> np.ndarray:
-    """
-    Choose given number of random elements from an array, without replacement
-
-    Parameters
-    ----------
-    arr : ndarray
-        Array to shuffle
-    rng : RNG
-        Random Number Generator object
-    size : int, optional
-        Number of elements to pick from array
-        The default is 1
-
-    Returns
-    -------
-    chosen : ndarray
-        Randomly chosen elements from arr, shape (size,)
-    """
-    # I implement the fisher yates algorithm for randomly drawing unique elements from list
-    # source: Wikipedia (https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle)
-    N = len(arr)
-    if size > N:
-        raise Exception("requested size is larger than array length")
-
-    chosen = []  # instantiate list in which to store chosen samples
-    for i in range(size):
-        chosen_indx = rng.int((0, N - 1))  # draw a random index
-        chosen.append(arr[chosen_indx])
-        arr[[i, N - 1]] = arr[[N - 1, i]]  # put drawn sample at N-1th index
-        N -= 1  # shorten the amount of indices which can be drawn to avoid drawing same element twice
-
-    return np.array(chosen)
 
 
 ##### Derivative block #####
@@ -287,7 +216,7 @@ def main():
 
     # Cumulative plot of the chosen galaxies (1c)
     fig1c, ax = plt.subplots()
-    ax.plot(sorted_chosen, np.arange(100))
+    ax.plot(sorted_chosen, np.arange(100) + 1) #add one since arange goes from 0 to 99 and y axis gives cumulative number of galaxies
     ax.set(
         xscale="log",
         xlabel="Relative radius",
