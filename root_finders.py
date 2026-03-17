@@ -285,8 +285,8 @@ def improved_newton_raphson(
                 return c, Delta, Delta / c, i+1
             return c, Delta, Delta / c
         
-        if np.abs(f_a - f_b) > np.abs(a - b): #check how quickly f varies
-            break #if it varies sufficiently, then switch to newton raphson instead
+        if np.abs(f_a - f_b) > np.abs(a - b): #check how quickly f varies (is ~slope roughly greater than 1)
+            break #if it varies sufficiently much, then switch to newton raphson instead
     
     if return_iters:
         c, abserr, relerr, NR_iters = newton_raphson(
