@@ -1,7 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from root_finders import bisection, false_position, newton_raphson, improved_newton_raphson
+from root_finders import (
+    bisection,
+    false_position,
+    newton_raphson,
+    improved_newton_raphson,
+)
 
 from timeit import timeit
 
@@ -22,10 +27,10 @@ def equilibrium1(
 ):  # there is no need for the k either as it cancels out as well
     return psi * Tc - (0.684 - 0.0416 * np.log(T / (1e4 * Z * Z))) * T
 
-def equilibrium1_deriv( #derivative of equilibrium1 wrt to T
-    T, Z, Tc, psi                  
-):
-    return -0.684 + 0.0416*(np.log(T/ (1e4 * Z * Z)) + 1)
+
+def equilibrium1_deriv(T, Z, Tc, psi):  # derivative of equilibrium1 wrt to T
+    return -0.684 + 0.0416 * (np.log(T / (1e4 * Z * Z)) + 1)
+
 
 term1 = lambda T: psi * Tc * np.ones_like(T)
 term2 = lambda T: -0.684 * T
@@ -47,20 +52,13 @@ def equilibrium2(T, Z, Tc, psi, nH, A, xi, aB):
     )
 
 
-def equilibrium2_deriv(T, Z, nH, aB): #derivative of equilibrium2 wrt to T
+def equilibrium2_deriv(T, Z, nH, aB):  # derivative of equilibrium2 wrt to T
     return (
-        (
-            - (0.684 - 0.0416 * np.log(T / (1e4 * Z * Z)))
-            - 0.54 * (T * 1e-4) ** 0.37 
-
-            - (0.684 - 0.0416) 
-            - 0.54*0.37*1e-4 * (T * 1e-4) ** (0.37-1) * T
-        )
-        * k
-        * nH
-        * aB
-        + 8.9e-22
-    )
+        -(0.684 - 0.0416 * np.log(T / (1e4 * Z * Z)))
+        - 0.54 * (T * 1e-4) ** 0.37
+        - (0.684 - 0.0416)
+        - 0.54 * 0.37 * 1e-4 * (T * 1e-4) ** (0.37 - 1) * T
+    ) * k * nH * aB + 8.9e-22
 
 
 def main():
@@ -84,27 +82,47 @@ def main():
 
     func = lambda T: equilibrium1(T, Z, Tc, psi)
     deriv = lambda T: equilibrium1_deriv(T, Z, Tc, psi)
-    
+
     # I test the time it takes to run by using 1000 runs, then divide by 1000 to get the average runtime
 
-    root1, aerr1, rerr1, iters1 = bisection(func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True) 
-    time1 = 0.001*timeit(lambda: bisection(func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True), number=1000)
+    root1, aerr1, rerr1, iters1 = bisection(
+        func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+    )
+    time1 = 0.001 * timeit(
+        lambda: bisection(
+            func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+        ),
+        number=1000,
+    )
 
-    root2, aerr2, rerr2, iters2 = false_position(func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True) 
-    time2 = 0.001*timeit(lambda: false_position(func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True), number=1000)
-    
-    root3, aerr3, rerr3, iters3 = improved_newton_raphson(func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True) 
-    time3 = 0.001*timeit(lambda: improved_newton_raphson(func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True), number=1000)
+    root2, aerr2, rerr2, iters2 = false_position(
+        func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+    )
+    time2 = 0.001 * timeit(
+        lambda: false_position(
+            func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+        ),
+        number=1000,
+    )
+
+    root3, aerr3, rerr3, iters3 = improved_newton_raphson(
+        func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+    )
+    time3 = 0.001 * timeit(
+        lambda: improved_newton_raphson(
+            func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+        ),
+        number=1000,
+    )
 
     with open("Calculations/equilibrium_temp_simple_bisection.txt", "w") as f:
         f.write(f"{root1:.12g} & {aerr1:.3e} & {rerr1:.3e} & {iters1} & {time1}")
 
     with open("Calculations/equilibrium_temp_simple_false_position.txt", "w") as f:
         f.write(f"{root2:.12g} & {aerr2:.3e} & {rerr2:.3e} & {iters2} & {time2}")
-    
+
     with open("Calculations/equilibrium_temp_simple_newton_raphson.txt", "w") as f:
         f.write(f"{root3:.12g} & {aerr3:.3e} & {rerr3:.3e} & {iters3} & {time3}")
-
 
     #### 2b ####
 
@@ -132,26 +150,54 @@ def main():
         # plt.ylim(-1e3, 1e3)
         plt.legend()
         # plt.savefig("Plots/contributions_2a.png", dpi=600)
-        plt.show()
+        #plt.show()
+        plt.close()
 
-        root1, aerr1, rerr1, iters1 = bisection(func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True) 
-        time1 = 0.001*timeit(lambda: bisection(func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True), number=1000)
+        root1, aerr1, rerr1, iters1 = bisection(
+            func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+        )
+        time1 = 0.001 * timeit(
+            lambda: bisection(
+                func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+            ),
+            number=1000,
+        )
 
-        root2, aerr2, rerr2, iters2 = false_position(func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True) 
-        time2 = 0.001*timeit(lambda: false_position(func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True), number=1000)
-        
-        root3, aerr3, rerr3, iters3 = improved_newton_raphson(func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True) 
-        time3 = 0.001*timeit(lambda: improved_newton_raphson(func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True), number=1000)
+        # root2, aerr2, rerr2, iters2 = false_position(
+        #     func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+        # )
+        # time2 = 0.001 * timeit(
+        #     lambda: false_position(
+        #         func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+        #     ),
+        #     number=1000,
+        # )
+
+        # root3, aerr3, rerr3, iters3 = improved_newton_raphson(
+        #     func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
+        # )
+        # time3 = 0.001 * timeit(
+        #     lambda: improved_newton_raphson(
+        #         func,
+        #         deriv,
+        #         bracket,
+        #         atol=1e-6,
+        #         rtol=1e-2,
+        #         max_iters=100,
+        #         return_iters=True,
+        #     ),
+        #     number=1000,
+        # )
 
         if nH == 1e-4:
             with open("Calculations/equilibrium_low_density.txt", "w") as f:
-                f.write(f"{root:.12g}")
+                f.write(f"{root1:.12g}")
         elif nH == 1:
             with open("Calculations/equilibrium_mid_density.txt", "w") as f:
-                f.write(f"{root:.12g}")
+                f.write(f"{root1:.12g}")
         elif nH == 1e4:
             with open("Calculations/equilibrium_high_density.txt", "w") as f:
-                f.write(f"{root:.12g}")
+                f.write(f"{root1:.12g}")
 
 
 if __name__ == "__main__":

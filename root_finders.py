@@ -7,7 +7,7 @@ def bisection(
     atol: float = 1e-6,
     rtol: float = 1e-6,
     max_iters: int = 100,
-    return_iters: bool = False
+    return_iters: bool = False,
 ) -> tuple[float, float, float]:
     """
     Find a root of a function using bisection
@@ -60,12 +60,12 @@ def bisection(
         Delta *= 0.5  # bisection always decreases bracket width by factor 0.5
         if Delta < atol:
             if return_iters:
-                return c, Delta, Delta / c, i+1
+                return c, Delta, Delta / c, i + 1
             return c, Delta, Delta / c
-        
+
         if Delta < rtol * c:
             if return_iters:
-                return c, Delta, Delta / c, i+1            
+                return c, Delta, Delta / c, i + 1
             return c, Delta, Delta / c
 
     raise Exception("requested tolerance not reached")
@@ -77,7 +77,7 @@ def false_position(
     atol: float = 1e-6,
     rtol: float = 1e-6,
     max_iters: int = 100,
-    return_iters: bool = False
+    return_iters: bool = False,
 ) -> tuple[float, float, float]:
     """
     Find a root of a function using false position algorithm
@@ -132,19 +132,18 @@ def false_position(
         if c < a or c > b:  # if c is outside of bracket, use bisection instead
             c = 0.5 * (a + b)
         Delta = b - a
-        
+
         if Delta < atol:
             if return_iters:
-                return c, Delta, Delta / c, i+1
+                return c, Delta, Delta / c, i + 1
             return c, Delta, Delta / c
-        
+
         if Delta < rtol * c:
             if return_iters:
-                return c, Delta, Delta / c, i+1            
+                return c, Delta, Delta / c, i + 1
             return c, Delta, Delta / c
 
     raise Exception("requested tolerance not reached")
-
 
 
 def newton_raphson(
@@ -154,7 +153,7 @@ def newton_raphson(
     atol: float = 1e-6,
     rtol: float = 1e-6,
     max_iters: int = 100,
-    return_iters: bool = False
+    return_iters: bool = False,
 ) -> tuple[float, float, float]:
     """
     Find a root of a function using false position algorithm
@@ -193,21 +192,26 @@ def newton_raphson(
     x = x_start
 
     for i in range(max_iters):
-        x_next = x - func(x) / deriv(x) # update to next point using newton raphson procedure
+        x_next = x - func(x) / deriv(
+            x
+        )  # update to next point using newton raphson procedure
 
-        Delta = np.abs(x_next - x)  # compute error as difference between previous point and current best
+        Delta = np.abs(
+            x_next - x
+        )  # compute error as difference between previous point and current best
         if Delta < atol:
             if return_iters:
-                return x_next, Delta, Delta*x_next, i+1
-            return x_next, Delta, Delta*x_next
-        
+                return x_next, Delta, Delta * x_next, i + 1
+            return x_next, Delta, Delta * x_next
+
         if Delta < rtol * x_next:
             if return_iters:
-                return x_next, Delta, Delta*x_next, i+1
-            return x_next, Delta, Delta*x_next
+                return x_next, Delta, Delta * x_next, i + 1
+            return x_next, Delta, Delta * x_next
 
     raise Exception("requested tolerance not reached")
-    
+
+
 def improved_newton_raphson(
     func: callable,
     deriv: callable,
@@ -215,7 +219,7 @@ def improved_newton_raphson(
     atol: float = 1e-6,
     rtol: float = 1e-6,
     max_iters: int = 100,
-    return_iters: bool = False
+    return_iters: bool = False,
 ) -> tuple[float, float, float]:
     """
     Find a root of a function using a combination of false position and newton raphson algorithm
@@ -278,26 +282,37 @@ def improved_newton_raphson(
 
         if Delta < atol:
             if return_iters:
-                return c, Delta, Delta / c, i+1
+                return c, Delta, Delta / c, i + 1
             return c, Delta, Delta / c
         if Delta < rtol * c:
             if return_iters:
-                return c, Delta, Delta / c, i+1
+                return c, Delta, Delta / c, i + 1
             return c, Delta, Delta / c
-        
-        if np.abs(f_a - f_b) > np.abs(a - b): #check how quickly f varies (is ~slope roughly greater than 1)
-            break #if it varies sufficiently much, then switch to newton raphson instead
-    
+
+        if np.abs(f_a - f_b) > np.abs(
+            a - b
+        ):  # check how quickly f varies (is ~slope roughly greater than 1)
+            break  # if it varies sufficiently much, then switch to newton raphson instead
+
     if return_iters:
         c, abserr, relerr, NR_iters = newton_raphson(
-                                            func, deriv, x_start=c, atol=atol, rtol=rtol, 
-                                            max_iters=max_iters, return_iters=return_iters)
+            func,
+            deriv,
+            x_start=c,
+            atol=atol,
+            rtol=rtol,
+            max_iters=max_iters,
+            return_iters=return_iters,
+        )
         return c, abserr, relerr, NR_iters + i + 1
-    else: 
+    else:
         c, abserr, relerr = newton_raphson(
-                                    func, deriv, x_start=c, atol=atol, rtol=rtol, 
-                                    max_iters=max_iters, return_iters=return_iters)
+            func,
+            deriv,
+            x_start=c,
+            atol=atol,
+            rtol=rtol,
+            max_iters=max_iters,
+            return_iters=return_iters,
+        )
         return c, abserr, relerr
-    
-    
-
