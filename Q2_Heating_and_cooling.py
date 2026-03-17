@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from root_finders import bisection, false_position, newton_raphson
+from root_finders import bisection, false_position, newton_raphson, improved_newton_raphson
 
 # Constants (mind the units!)
 
@@ -20,6 +20,10 @@ def equilibrium1(
 ):  # there is no need for the k either as it cancels out as well
     return psi * Tc - (0.684 - 0.0416 * np.log(T / (1e4 * Z * Z))) * T
 
+def equilibrium1_deriv(
+    T, Z, Tc, psi                  
+):
+    return -0.684 + 0.0416*(np.log(T/ (1e4 * Z * Z)) + 1)
 
 term1 = lambda T: psi * Tc * np.ones_like(T)
 term2 = lambda T: -0.684 * T
@@ -61,15 +65,23 @@ def main():
     plt.plot(T_vals, term3(T_vals), label=r"$CT\ln (DT)$")
     plt.xscale("log")
     plt.yscale("symlog", linthresh=10)
-    plt.ylim(-1e7, 1e9)
+    plt.ylim(-1e3, 1e3)
     plt.legend()
     plt.savefig("Plots/contributions_2a.png", dpi=600)
     plt.close()
 
-    root, aerr, rerr = 0.0, 0.0, 0.0  # replace with your root finder
+    func = lambda T: equilibrium1(T, Z, Tc, psi)
+    deriv = lambda T: equilibrium1_deriv(T, Z, Tc, psi)
+
+    root1, aerr1, rerr1, iters1 = false_position(func, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True) 
+    print("iterations needed to find root using improved false_position:", iters1)
+    print(root1, aerr1, rerr1)
+    root, aerr, rerr, iters = improved_newton_raphson(func, deriv, bracket, atol=1e-15, rtol=1e-15, max_iters=100, return_iters=True) 
+    print("iterations needed to find root using improved newton raphson:", iters)
 
     with open("Calculations/equilibrium_temp_simple.txt", "w") as f:
         f.write(f"{root:.12g} & {aerr:.3e} & {rerr:.3e}")
+
     #### 2b ####
 
     # Initial bracket
