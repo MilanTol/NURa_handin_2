@@ -1,4 +1,7 @@
 import numpy as np
+import matplotlib.pyplot as plt
+
+from root_finders import bisection, false_position, newton_raphson
 
 # Constants (mind the units!)
 
@@ -12,9 +15,12 @@ xi = 1e-15
 
 
 # There's no need for nH nor ne as they cancel out
-def equilibrium1(T, Z, Tc, psi):
-    return psi * Tc * k - (0.684 - 0.0416 * np.log(T / (1e4 * Z * Z))) * T * k
+def equilibrium1(T, Z, Tc, psi): # there is no need for the k either as it cancels out as well
+    return psi * Tc - ( 0.684 - 0.0416 * np.log( T / (1e4 * Z*Z) ) ) * T
 
+term1 = lambda T: psi*Tc
+term2 = lambda T: -0.684*T
+term3 = lambda T: 0.0416 * np.log(T/(1e4*Z*Z)) * T
 
 def equilibrium2(T, Z, Tc, psi, nH, A, xi, aB):
     return (
@@ -40,50 +46,25 @@ def equilibrium2(T, Z, Tc, psi, nH, A, xi, aB):
 #### root finder ####
 
 
-def root_finder(
-    func: callable,  # add derivative if using Newton-Raphson
-    bracket: tuple,
-    atol: float = 1e-6,
-    rtol: float = 1e-6,
-    max_iters: int = 100,
-) -> tuple[float, float, float]:
-    """
-    Find a root of a function
-
-    Parameters
-    ----------
-    func : callable
-        Function to find root of
-    bracket : tuple
-        Bracket for which to find first secant
-    atol : float, optional
-        Absolute tolerance.
-        The default is 1e-6
-    rtol : float, optional
-        Relative tolerance.
-        The default is 1e-6
-    max_iters: int, optional
-        Maximum number of iterations.
-        Teh default is 100
-
-    Returns
-    -------
-    root : float
-        Approximate root
-    aerr : float
-        Absolute error
-    rerr : float
-        Relative error
-    """
-    # TODO: Implement root finder (e.g. bisection, false-position, Newton-Raphson)
-    return 0.0, 0.0, 0.0
-
 
 def main():
 
     # Initial bracket
     bracket = (1, 1e7)
 
+    T_vals = np.geomspace(1, 1e20, 300)
+    y_vals = equilibrium1(T=T_vals, Z=Z, Tc=Tc, psi=psi)
+
+    plt.plot(T_vals, y_vals, r'$f(T)$')
+    plt.plot(T_vals, term1(T_vals), label=r"$A$")
+    plt.plot(T_vals, term2(T_vals), label=r'$-BT$')
+    plt.plot(T_vals, term3(T_vals), label=r'$CT\ln (DT)$')
+    plt.xscale('log')
+    plt.yscale('symlog', linthresh=1e-16)
+    plt.savefig("Plots/contributions_2a.png", dpi=600)
+    plt.show()
+
+    exit()
     root, aerr, rerr = 0.0, 0.0, 0.0  # replace with your root finder
 
     with open("Calculations/equilibrium_temp_simple.txt", "w") as f:
