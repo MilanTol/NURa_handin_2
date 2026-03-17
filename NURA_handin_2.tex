@@ -81,7 +81,7 @@ A \langle N_\mathrm{sat} \rangle
 dx.
 \end{equation}
 We will use Romberg integration as our method of numeric integration.
-Romberg integration is a lot more accurate if the function does not vary rapidly,
+Romberg integration is a lot more accurate if the function does not vary rapidly and is close to linear,
 as it uses evenly spaced samples and trapezoid to approximate the function. 
 We rewrite the integral into an integral over logspace, as this makes sure the inner region of the profile, 
 where the function varies the most and the region which contributes the most, gets a sufficient amount of samples.
@@ -101,6 +101,9 @@ since it is linear in A. In other words, solve the integral for $A=1$, then $A =
 We find:
 \input{Calculations/satellite_A.txt}
 \hline
+
+\subsubsection{Code for integrating}
+\lstinputlisting[language=Python]{\CodeDir/integration.txt}
 
 \subsection{(1b) Sampling the satellite distribution}
 
@@ -131,11 +134,12 @@ Filling in $n(x)$:
 
 Does your sampled distribution agree with the analytical prediction?
 
-\subsection{Code for sampling}
+\subsubsection{Code for random number generation}
+\lstinputlisting[language=Python]{\CodeDir/rng.txt}
 
-\lstinputlisting[language=Python]{\CodeDir/satellites_sampling_code.txt}
+\subsubsection{Code for sampling}
+\lstinputlisting[language=Python]{\CodeDir/distribution.txt}
  
-
 
 \subsection{(1c) Selecting and sorting satellites}
 
@@ -148,10 +152,8 @@ Explain the sorting algorithm you used.
 \caption{Cumulative number of selected galaxies as a function of relative radius.}
 \end{figure}
 
-\subsection{Code for selection and sorting}
-
-\lstinputlisting[language=Python]{\CodeDir/satellites_selection_code.txt}
-
+\subsubsection{Code for selection and sorting}
+\lstinputlisting[language=Python]{\CodeDir/sorter.txt}
 
 
 \subsection{(1d) Numerical derivative}
@@ -182,9 +184,12 @@ Numerical & \input{\CalcDir/satellite_deriv_numeric.txt} \\
 
 Do your analytical and numerical derivatives agree? Why?
 
-\subsection{Code for derivative calculation}
+\subsubsection{Code for derivative calculation}
+\lstinputlisting[language=Python]{\CodeDir/differentiation.txt}
 
-\lstinputlisting[language=Python]{\CodeDir/satellites_derivative_code.txt}
+\subsection{Execution code for exercise 1}
+\lstinputlisting[language=Python]{\CodeDir/Q1_SatelliteGalaxy.txt}
+
 
 \section{Heating and cooling in HII regions}
 
