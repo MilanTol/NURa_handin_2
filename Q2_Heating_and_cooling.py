@@ -85,32 +85,34 @@ def main():
 
     # I test the time it takes to run by using 1000 runs, then divide by 1000 to get the average runtime
 
+    atol, rtol = 1e-10, 1e-10
+
     root1, aerr1, rerr1, iters1 = bisection(
-        func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+        func, bracket, atol, rtol, max_iters=100, return_iters=True
     )
     time1 = 0.001 * timeit(
         lambda: bisection(
-            func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+            func, bracket, atol, rtol, max_iters=100, return_iters=True
         ),
         number=1000,
     )
 
     root2, aerr2, rerr2, iters2 = false_position(
-        func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+        func, bracket, atol, rtol, max_iters=100, return_iters=True
     )
     time2 = 0.001 * timeit(
         lambda: false_position(
-            func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+            func, bracket, atol, rtol, max_iters=100, return_iters=True
         ),
         number=1000,
     )
 
     root3, aerr3, rerr3, iters3 = improved_newton_raphson(
-        func, deriv, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+        func, deriv, bracket, atol, rtol, max_iters=100, return_iters=True
     )
     time3 = 0.001 * timeit(
         lambda: improved_newton_raphson(
-            func, deriv, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+            func, deriv, bracket, atol, rtol, max_iters=100, return_iters=True
         ),
         number=1000,
     )
@@ -139,8 +141,6 @@ def main():
 
         func = lambda T: equilibrium2(T, Z, Tc, psi, nH, A, xi, aB)
         deriv = lambda T: equilibrium2_deriv(T, Z, nH, aB)
-
-        print("nH = ", nH)
 
         # Initial bracket
 
