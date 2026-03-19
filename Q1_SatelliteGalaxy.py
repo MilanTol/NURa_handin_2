@@ -11,14 +11,14 @@ from selection import choice
 
 
 def n(
-    x: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
-) -> float | np.ndarray:
+    x: np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
+) -> np.ndarray:
     """
     Number density profile of satellite galaxies
 
     Parameters
     ----------
-    x : float | ndarray
+    x : ndarray
         Radius in units of virial radius; x = r / r_virial
     A : float
         Normalisation
@@ -33,7 +33,7 @@ def n(
 
     Returns
     -------
-    float | ndarray
+    ndarray
         Same type and shape as x. Number density of satellite galaxies
         at given radius x.
     """
@@ -42,14 +42,14 @@ def n(
 
 
 def logspace_integrand(
-    u: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
-) -> float | np.ndarray:
+    u: np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
+) -> np.ndarray:
     """
     The integrand as described in eq. 4 in the text.
 
     Parameters
     ----------
-    u : float | ndarray
+    u : ndarray
         ln(r / r_virial).
     A : float
         Normalisation
@@ -64,7 +64,7 @@ def logspace_integrand(
 
     Returns
     -------
-    float | ndarray
+    ndarray
         Same type and shape as x. Number density of satellite galaxies
         at given radius x.
     """
@@ -77,8 +77,8 @@ def logspace_integrand(
 
 
 def dn_dx(
-    x: float | np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
-) -> float | np.ndarray:
+    x: np.ndarray, A: float, Nsat: float, a: float, b: float, c: float
+) -> np.ndarray:
     """
     Analytical derivative of number density provide
 
@@ -99,7 +99,7 @@ def dn_dx(
 
     Returns
     -------
-    float | ndarray
+    ndarray
         Same type and shape as x. Derivative of number density of
         satellite galaxies at given radius x.
     """
