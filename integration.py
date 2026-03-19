@@ -3,7 +3,7 @@ import numpy as np
 
 def romberg_integrator(
     func: callable, bounds: tuple, order: int = 5, err: bool = False, args: tuple = ()
-) -> float | tuple[float, float]:
+) -> float:
     """
     Romberg integration method
 
