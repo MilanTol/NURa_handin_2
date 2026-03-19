@@ -148,6 +148,48 @@ does not provide any information.
 
 The random number generator used for sampling uses a combination of 3 random processes:
 2 XOR operations and 1 MWC operation. Each of these processes carries their own state.
+I have tested the RNG using diehard, I installed the latest version through sudo apt on linux.
+I tested the rng for $10^7$ integers for seed of 1.
+The RNG passed most tests but failed and was weak for some others. 
+(I have tried multiple xor and MWC combinations but I couldnt find one that passes all, this one seemed best).
+See the output of diehard below.
+
+# The file file_input_raw was rewound 1 times
+   diehard_birthdays|   0|       100|     100|0.81924178|  PASSED  
+# The file file_input_raw was rewound 11 times
+      diehard_operm5|   0|   1000000|     100|0.01177582|  PASSED  
+# The file file_input_raw was rewound 24 times
+  diehard_rank_32x32|   0|     40000|     100|0.00005522|   WEAK   
+# The file file_input_raw was rewound 30 times
+    diehard_rank_6x8|   0|    100000|     100|0.19898295|  PASSED  
+# The file file_input_raw was rewound 32 times
+   diehard_bitstream|   0|   2097152|     100|0.96039054|  PASSED  
+# The file file_input_raw was rewound 53 times
+        diehard_opso|   0|   2097152|     100|0.00058022|   WEAK   
+# The file file_input_raw was rewound 67 times
+        diehard_oqso|   0|   2097152|     100|0.28602377|  PASSED  
+# The file file_input_raw was rewound 74 times
+         diehard_dna|   0|   2097152|     100|0.48982144|  PASSED  
+# The file file_input_raw was rewound 74 times
+diehard_count_1s_str|   0|    256000|     100|0.75092656|  PASSED  
+# The file file_input_raw was rewound 87 times
+diehard_count_1s_byt|   0|    256000|     100|0.00000000|  FAILED  
+# The file file_input_raw was rewound 87 times
+ diehard_parking_lot|   0|     12000|     100|0.13836133|  PASSED  
+# The file file_input_raw was rewound 88 times
+    diehard_2dsphere|   2|      8000|     100|0.39575233|  PASSED  
+# The file file_input_raw was rewound 88 times
+    diehard_3dsphere|   3|      4000|     100|0.95908078|  PASSED  
+# The file file_input_raw was rewound 111 times
+     diehard_squeeze|   0|    100000|     100|0.00000003|  FAILED  
+# The file file_input_raw was rewound 111 times
+        diehard_sums|   0|       100|     100|0.15557686|  PASSED  
+# The file file_input_raw was rewound 112 times
+        diehard_runs|   0|    100000|     100|0.41121387|  PASSED  
+        diehard_runs|   0|    100000|     100|0.56491658|  PASSED  
+# The file file_input_raw was rewound 125 times
+       diehard_craps|   0|    200000|     100|0.00000000|  FAILED  
+       diehard_craps|   0|    200000|     100|0.22382397|  PASSED 
 
 
 \begin{figure}[H]

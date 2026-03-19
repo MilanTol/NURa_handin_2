@@ -73,3 +73,5 @@ class RNG:
         else:
             a, b = bounds
             return (self.int() / 2**64) * (b - a) + a
+
+
