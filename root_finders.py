@@ -118,8 +118,7 @@ def false_position(
     if f_a * f_b > 0:  # check whether inputted bracket is in fact a bracket
         raise Exception("bracket does not contain root")
 
-    Delta0 = b - a
-    Delta = Delta0
+    Delta = np.abs(b - a)
 
     c = b - (b - a) / (f_b - f_a) * f_b  # finds root using slope
     for i in range(max_iters):
@@ -134,7 +133,8 @@ def false_position(
 
         if c < a or c > b:  # if c is outside of bracket, use bisection instead
             c = 0.5 * (a + b)
-        Delta = np.abs(b - a)
+
+        Delta = min(np.abs(b - c), np.abs(a - c))
 
         if Delta < atol:
             if return_iters:
@@ -278,7 +278,7 @@ def improved_newton_raphson(
 
     for i in range(max_iters):
         used_NR = False
-        if deriv_c != 0: #avoid division by 0
+        if deriv_c != 0:  # avoid division by 0
             potential_c = c - f_c / deriv_c
             if a < potential_c < b:  # check whether we can use newton-raphson
                 c = potential_c  # if the found point is within the bracket, set this as c instead
@@ -301,12 +301,14 @@ def improved_newton_raphson(
         elif f_b * f_c < 0:  # otherwise the root must lie within [c, b]
             a = c  # overwrite a with c
             f_a = f_c
-        if f_c == 0: # if NR reaches the solutions perfectly (up to machine precision) return with no errors
+        if (
+            f_c == 0
+        ):  # if NR reaches the solutions perfectly (up to machine precision) return with no errors
             if return_iters:
                 return c, 0, 0, i + 1
             return c, 0, 0
 
-        Delta = np.abs(b - a)
+        Delta = min(np.abs(b - c), np.abs(a - c))
 
         if Delta < atol:
             if return_iters:

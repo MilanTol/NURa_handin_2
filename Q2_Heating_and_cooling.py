@@ -69,17 +69,6 @@ def main():
     T_vals = np.geomspace(1, 1e7, 300)
     y_vals = equilibrium1(T=T_vals, Z=Z, Tc=Tc, psi=psi)
 
-    plt.plot(T_vals, y_vals, label=r"$f(T)$")
-    plt.plot(T_vals, term1(T_vals), label=r"$A$")
-    plt.plot(T_vals, term2(T_vals), label=r"$-BT$")
-    plt.plot(T_vals, term3(T_vals), label=r"$CT\ln (DT)$")
-    plt.xscale("log")
-    plt.yscale("symlog", linthresh=10)
-    plt.ylim(-1e3, 1e3)
-    plt.legend()
-    plt.savefig("Plots/contributions_2a.png", dpi=600)
-    plt.close()
-
     func = lambda T: equilibrium1(T, Z, Tc, psi)
     deriv = lambda T: equilibrium1_deriv(T, Z, Tc, psi)
 
@@ -134,74 +123,137 @@ def main():
 
     # Initial bracket
     bracket = (1, 1e15)
+    target_accuracy = 1e-10
 
     for nH in [1e-4, 1, 1e4]:
 
         func = lambda T: equilibrium2(T, Z, Tc, psi, nH, A, xi, aB)
         deriv = lambda T: equilibrium2_deriv(T, Z, nH, aB)
 
-        # Initial bracket
-
-        T_vals = np.geomspace(1, 1e15, 300)
-        y_vals = equilibrium2(T_vals, Z, Tc, psi, nH, A, xi, aB)
-
-        plt.plot(T_vals, y_vals, label=r"$f(T)$")
-        # plt.plot(T_vals, term1(T_vals), label=r"$A$")
-        # plt.plot(T_vals, term2(T_vals), label=r"$-BT$")
-        # plt.plot(T_vals, term3(T_vals), label=r"$CT\ln (DT)$")
-        plt.xscale("log")
-        plt.yscale("symlog", linthresh=1e-25)
-        # plt.ylim(-1e3, 1e3)
-        plt.legend()
-        # plt.savefig("Plots/contributions_2a.png", dpi=600)
-        # plt.show()
-        plt.close()
-
         root1, aerr1, rerr1, iters1 = bisection(
-            func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+            func,
+            bracket,
+            atol=target_accuracy,
+            rtol=target_accuracy,
+            max_iters=100,
+            return_iters=True,
         )
         time1 = 0.001 * timeit(
             lambda: bisection(
-                func, bracket, atol=1e-6, rtol=1e-6, max_iters=100, return_iters=True
+                func,
+                bracket,
+                atol=target_accuracy,
+                rtol=target_accuracy,
+                max_iters=100,
+                return_iters=True,
             ),
             number=1000,
         )
 
-        # root2, aerr2, rerr2, iters2 = false_position(
-        #     func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
-        # )
-        # time2 = 0.001 * timeit(
-        #     lambda: false_position(
-        #         func, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
-        #     ),
-        #     number=1000,
-        # )
+        root2, aerr2, rerr2, iters2 = false_position(
+            func,
+            bracket,
+            atol=target_accuracy,
+            rtol=target_accuracy,
+            max_iters=100,
+            return_iters=True,
+        )
+        time2 = 0.001 * timeit(
+            lambda: false_position(
+                func,
+                bracket,
+                atol=target_accuracy,
+                rtol=target_accuracy,
+                max_iters=100,
+                return_iters=True,
+            ),
+            number=1000,
+        )
 
-        # root3, aerr3, rerr3, iters3 = improved_newton_raphson(
-        #     func, deriv, bracket, atol=1e-6, rtol=1e-2, max_iters=100, return_iters=True
-        # )
-        # time3 = 0.001 * timeit(
-        #     lambda: improved_newton_raphson(
-        #         func,
-        #         deriv,
-        #         bracket,
-        #         atol=1e-6,
-        #         rtol=1e-2,
-        #         max_iters=100,
-        #         return_iters=True,
-        #     ),
-        #     number=1000,
-        # )
+        root3, aerr3, rerr3, iters3 = improved_newton_raphson(
+            func,
+            deriv,
+            bracket,
+            atol=target_accuracy,
+            rtol=target_accuracy,
+            max_iters=100,
+            return_iters=True,
+        )
+        time3 = 0.001 * timeit(
+            lambda: improved_newton_raphson(
+                func,
+                deriv,
+                bracket,
+                atol=target_accuracy,
+                rtol=target_accuracy,
+                max_iters=100,
+                return_iters=True,
+            ),
+            number=1000,
+        )
 
         if nH == 1e-4:
-            with open("Calculations/equilibrium_low_density.txt", "w") as f:
-                f.write(f"{root1:.12g}")
+
+            with open("Calculations/equilibrium_low_density_bisection.txt", "w") as f:
+                f.write(
+                    f"Bisection & {root1:.12g} & {aerr1:.3e} & {rerr1:.3e} & {iters1} & {time1:.7g}"
+                )
+
+            with open(
+                "Calculations/equilibrium_low_density_false_position.txt", "w"
+            ) as f:
+                f.write(
+                    f"False position & {root2:.12g} & {aerr2:.3e} & {rerr2:.3e} & {iters2} & {time2:.7g}"
+                )
+
+            with open(
+                "Calculations/equilibrium_low_density_newton_raphson.txt", "w"
+            ) as f:
+                f.write(
+                    f"Newton-Raphson & {root3:.12g} & {aerr3:.3e} & {rerr3:.3e} & {iters3} & {time3:.7g}"
+                )
+
         elif nH == 1:
-            with open("Calculations/equilibrium_mid_density.txt", "w") as f:
-                f.write(f"{root1:.12g}")
+
+            with open("Calculations/equilibrium_mid_density_bisection.txt", "w") as f:
+                f.write(
+                    f"Bisection & {root1:.12g} & {aerr1:.3e} & {rerr1:.3e} & {iters1} & {time1:.7g}"
+                )
+
+            with open(
+                "Calculations/equilibrium_mid_density_false_position.txt", "w"
+            ) as f:
+                f.write(
+                    f"False position & {root2:.12g} & {aerr2:.3e} & {rerr2:.3e} & {iters2} & {time2:.7g}"
+                )
+
+            with open(
+                "Calculations/equilibrium_mid_density_newton_raphson.txt", "w"
+            ) as f:
+                f.write(
+                    f"Newton-Raphson & {root3:.12g} & {aerr3:.3e} & {rerr3:.3e} & {iters3} & {time3:.7g}"
+                )
+
         elif nH == 1e4:
-            with open("Calculations/equilibrium_high_density.txt", "w") as f:
-                f.write(f"{root1:.12g}")
+
+            with open("Calculations/equilibrium_high_density_bisection.txt", "w") as f:
+                f.write(
+                    f"Bisection & {root1:.12g} & {aerr1:.3e} & {rerr1:.3e} & {iters1} & {time1:.7g}"
+                )
+
+            with open(
+                "Calculations/equilibrium_high_density_false_position.txt", "w"
+            ) as f:
+                f.write(
+                    f"False position & {root2:.12g} & {aerr2:.3e} & {rerr2:.3e} & {iters2} & {time2:.7g}"
+                )
+
+            with open(
+                "Calculations/equilibrium_high_density_newton_raphson.txt", "w"
+            ) as f:
+                f.write(
+                    f"Newton-Raphson & {root3:.12g} & {aerr3:.3e} & {rerr3:.3e} & {iters3} & {time3:.7g}"
+                )
 
 
 if __name__ == "__main__":

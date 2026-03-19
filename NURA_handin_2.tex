@@ -333,7 +333,10 @@ Name & Temperature [K] & Absolute error & Relative error & iterations & time to 
 \end{tabular}
 \end{table}
 
-We see that 
+We see that newton-raphson manages to find the exact root within 6 iterations. Which is quite a bit better
+than False position and a lot better than bisection. However, since the coded algorithm requires a lot more checks 
+and also calls the derivative function, it requires a lot more time to run per iteration. Only making it twice as fast 
+as bisection and false position. All algorithms converge to the correct answer. 
 
 \subsection{Code for finding roots}
 \lstinputlisting[language=Python]{\CodeDir/root_finders.txt}
@@ -342,22 +345,54 @@ We see that
 
 \subsection{(2b) More realistic model}
 
+In this problem we are asked to find the root of a more complicated funtion for various values of the hydrogen density.
+We compare the same algorithms as before. Since bisection is consistent, this is our reference as to whether 
+the algorithms produce correct answers. 
+We see that for larger densities the equilibrium temperature drops. 
+For a small hydrogen density the temperature is enormous. So in all realistic cases,
+these clouds are not in equilibrium and other mechanisms will adjust the density accordingly.
 
 \begin{table}[H]
 \centering
-\caption{Equilibrium temperature for different gas densities.}
-\begin{tabular}{|c|c|}
+\caption{Equilibrium temperature for $n_H = 10^{-4}$ [cm\(^{-3}\)]}
+\begin{tabular}{|c|c|c|c|c|c|}
 \hline
-Density \(n_H\) [cm\(^{-3}\)] & Equilibrium temperature [K] \\
+Name & Temperature [K] & Absolute error & Relative error & iterations & time to complete \\
 \hline
-$10^{-4}$ & \input{\CalcDir/equilibrium_low_density.txt} \\
-$1$ & \input{\CalcDir/equilibrium_mid_density.txt} \\
-$10^4$ & \input{\CalcDir/equilibrium_high_density.txt} \\
+\input{\CalcDir/equilibrium_low_density_bisection.txt} \\
+\input{\CalcDir/equilibrium_low_density_false_position.txt} \\
+\input{\CalcDir/equilibrium_low_density_newton_raphson.txt} \\
 \hline
 \end{tabular}
 \end{table}
 
-Discuss the results.  What is the difference for the low, intermediate and high gas density?
+\begin{table}[H]
+\centering
+\caption{Equilibrium temperature for $n_H = 1$ [cm\(^{-3}\)]}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Name & Temperature [K] & Absolute error & Relative error & iterations & time to complete \\
+\hline
+\input{\CalcDir/equilibrium_mid_density_bisection.txt} \\
+\input{\CalcDir/equilibrium_mid_density_false_position.txt} \\
+\input{\CalcDir/equilibrium_mid_density_newton_raphson.txt} \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Equilibrium temperature for $n_H = 10^{4}$ [cm\(^{-3}\)] }
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Name & Temperature [K] & Absolute error & Relative error & iterations & time to complete \\
+\hline
+\input{\CalcDir/equilibrium_high_density_bisection.txt} \\
+\input{\CalcDir/equilibrium_high_density_false_position.txt} \\
+\input{\CalcDir/equilibrium_high_density_newton_raphson.txt} \\
+\hline
+\end{tabular}
+\end{table}
 
 
 \subsection{Code for Exercise 2}
