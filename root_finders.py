@@ -68,7 +68,10 @@ def bisection(
                 return c, Delta, Delta / c, i + 1
             return c, Delta, Delta / c
 
-    raise Exception("requested tolerance not reached")
+    print("WARNING: requested tolerance not reached")
+    if return_iters:
+        return c, Delta, Delta / c, i + 1
+    return c, Delta, Delta / c
 
 
 def false_position(
@@ -131,7 +134,7 @@ def false_position(
 
         if c < a or c > b:  # if c is outside of bracket, use bisection instead
             c = 0.5 * (a + b)
-        Delta = b - a
+        Delta = np.abs(b - a)
 
         if Delta < atol:
             if return_iters:
@@ -143,7 +146,10 @@ def false_position(
                 return c, Delta, Delta / c, i + 1
             return c, Delta, Delta / c
 
-    raise Exception("requested tolerance not reached")
+    print("WARNING: requested tolerance not reached")
+    if return_iters:
+        return c, Delta, Delta / c, i + 1
+    return c, Delta, Delta / c
 
 
 def newton_raphson(
@@ -193,7 +199,7 @@ def newton_raphson(
 
     for i in range(max_iters):
         x_next = x - func(x) / deriv(
-            x
+            x  # note that if deriv(x)=0 this method breaks
         )  # update to next point using newton raphson procedure
 
         Delta = np.abs(
@@ -209,7 +215,10 @@ def newton_raphson(
                 return x_next, Delta, Delta * x_next, i + 1
             return x_next, Delta, Delta * x_next
 
-    raise Exception("requested tolerance not reached")
+    print("WARNING: requested tolerance not reached")
+    if return_iters:
+        return x_next, Delta, Delta * x_next, i + 1
+    return x_next, Delta, Delta * x_next
 
 
 def improved_newton_raphson(
@@ -261,24 +270,43 @@ def improved_newton_raphson(
     if f_a * f_b > 0:  # check whether inputted bracket is in fact a bracket
         raise Exception("bracket does not contain root")
 
-    Delta0 = b - a
-    Delta = Delta0
+    Delta = np.abs(b - a)
 
     c = b - (b - a) / (f_b - f_a) * f_b  # finds root using slope
+    f_c = func(c)
+    deriv_c = deriv(c)
 
     for i in range(max_iters):
+        used_NR = False
+        if deriv_c != 0: #avoid division by 0
+            potential_c = c - f_c / deriv_c
+            if a < potential_c < b:  # check whether we can use newton-raphson
+                c = potential_c  # if the found point is within the bracket, set this as c instead
+                used_NR = True
+
+        if not used_NR:  # if newton-raphson doesnt work, use false position instead
+            c = b - (b - a) / (f_b - f_a) * f_b  # find new c
+
+            if (
+                c < a or c > b
+            ):  # if c is outside of bracket even for false position, use bisection instead
+                c = 0.5 * (a + b)
+
         f_c = func(c)
+        deriv_c = deriv(c)
+
         if f_a * f_c < 0:  # check whether root is within [a,c]
             b = c  # overwrite b with c
             f_b = f_c  # reassign function value
-        else:  # otherwise the root must lie within [c, b]
+        elif f_b * f_c < 0:  # otherwise the root must lie within [c, b]
             a = c  # overwrite a with c
             f_a = f_c
-        c = b - (b - a) / (f_b - f_a) * f_b  # find new c
+        if f_c == 0: # if NR reaches the solutions perfectly (up to machine precision) return with no errors
+            if return_iters:
+                return c, 0, 0, i + 1
+            return c, 0, 0
 
-        if c < a or c > b:  # if c is outside of bracket, use bisection instead
-            c = 0.5 * (a + b)
-        Delta = b - a
+        Delta = np.abs(b - a)
 
         if Delta < atol:
             if return_iters:
@@ -289,30 +317,7 @@ def improved_newton_raphson(
                 return c, Delta, Delta / c, i + 1
             return c, Delta, Delta / c
 
-        if np.abs(f_a - f_b) > np.abs(
-            a - b
-        ):  # check how quickly f varies (is ~slope roughly greater than 1)
-            break  # if it varies sufficiently much, then switch to newton raphson instead
-
+    print("WARNING: could not reach target accuracy within max set iterations")
     if return_iters:
-        c, abserr, relerr, NR_iters = newton_raphson(
-            func,
-            deriv,
-            x_start=c,
-            atol=atol,
-            rtol=rtol,
-            max_iters=max_iters,
-            return_iters=return_iters,
-        )
-        return c, abserr, relerr, NR_iters + i + 1
-    else:
-        c, abserr, relerr = newton_raphson(
-            func,
-            deriv,
-            x_start=c,
-            atol=atol,
-            rtol=rtol,
-            max_iters=max_iters,
-            return_iters=return_iters,
-        )
-        return c, abserr, relerr
+        return c, Delta, Delta / c, i + 1
+    return c, Delta, Delta / c

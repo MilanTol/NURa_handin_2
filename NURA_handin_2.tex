@@ -127,7 +127,7 @@ Filling in $n(x)$:
 
 I found it hard to find an analytic inverse of the cumulative distribution, nor did I find a function 
 that fully encloses p for all x and for all other parameters that p depends on, that did not enclose a 
-large chunk of probability space not enclosed by p. Beside, evaluating p is quite fast. So for our current 
+large chunk of probability space not enclosed by p. Besides, evaluating p is quite fast. So for our current 
 means and purposes I use rejection sampling, even though the
 distribution is quite peaked, which makes rejection sampling a lot more inefficient.
 
@@ -139,7 +139,7 @@ $(p_{max} \times \mathrm{domain range} - 1) * N \approx N$ samples get rejected 
 
 The total rejected samples for this run was: \input{Calculations/rejected_samples.txt}.
 So in an ideal world where we would have access to the inverse cumulative distribution
-or a function that tightly encloses p (for all parameters), sampling this distrubution would be over 10 times faster.
+or a function that tightly encloses p (for all parameters), sampling this distribution would be over 10 times faster.
 
 We sample 10000 radii and plot the points in 20 logspace-bins, weighted by the inverse binsize. 
 We see that the analytic prediction matches the sampled distribution quite well for high probability regions.
@@ -179,7 +179,7 @@ This algorithm works as follows:
 \item store the element belonging to this index (the chosen element)
 \item swap the Nth element of the array with the chosen element
 \item Decrease N by 1
-\item repeat until desired number of elements are stored
+\item repeat until desired number of elements are stored \\
 \end{itemize}
 
 Step 2 ensures that each galaxy has equal probability of being chosen.
@@ -191,7 +191,8 @@ At no point during this algorithm do we reject a drawn index.
 So this algorithm satisfies the requirements equal probability, no duplicates, and no rejection.
 
 We proceed to sort the selected galaxies based on the distance from the central.
-For this we use the quicksort algorithm. We do not need a stable algorithm. 
+For this we use the quicksort algorithm, since we do not need a stable algorithm, but do care about speed and might 
+potentially want to scale up the problem in the future. 
 This sorting algorithm is implemented inside the Sorter class.
 It is divided up into two big blocks of code. The first block sorts an array \textbf{without} bookkeeping an index array 
 on the side as well.
@@ -253,7 +254,7 @@ The analytic expression for the derivative of the number density as function of 
 
 To numerically compute the derivative we employ Ridder's algorithm. 
 This algorithm uses a sequence of finite difference differentiation attempts and extrapolates 
-these estimates for $h \rightarrow 0$. Where h is the stepsize used for finite difference. 
+these estimates to $h \rightarrow 0$. Where h is the stepsize used for finite difference. 
 This algorithm is extremely powerful if the function is sufficiently smooth and is close to linear
 over the ranges of $h$ considered for the initial estimates.
 The analytic and numeric values of the derivative of the number density of satellites can be seen 
@@ -274,7 +275,7 @@ Numerical & \input{\CalcDir/satellite_deriv_numeric.txt} \\
 The analytical and numerical derivative agree to very high precision. 
 This is because the number density of satellites is a product and composition of smooth functions.
 So when taking sufficiently small h, ridders algorithm returns an extremely precise answer.
-The  
+  
 
 \subsubsection{Code for derivative calculation}
 \lstinputlisting[language=Python]{\CodeDir/differentiation.txt}
@@ -296,6 +297,10 @@ We have a function of the form:
 \end{equation}
 where A, B, C, D are independent of T. We are looking for $T \in [1, 10^7]\mathrm{K}$ such that $f(T) = 0$.
 I test a few root-finding algorithms: Bisection, false position, and Newton-Raphson. 
+I hypothesize that false position will be the fastest since this is a safe algorithm that
+assumes that the function is approximately linear. 
+At a first glance the function above seems to be quite linear, since the logarithm isnt a 
+sharply increasing function. I dont think Newton-Raphson will do well (explanation is below).
 For each algorithm I will test the number of iterations required, the time it took to run, and compare their results.
 
 Bisection iteratively splits up a bracket in half and checks which of the two subintervals contain the root. 
@@ -306,13 +311,12 @@ and from this approximation deduce where the root would be. If the estimated roo
 it resorts to bisection instead. 
 Lastly, we have Newton-Raphson. An exremely unstable, but potentially really fast algorithm which uses 
 the analytic expression for the derivative of the function in question and uses a starting point rather than a bracket. 
-In this scenario it is so unstable that it does not converge for most starting values.
 Newton-Raphson requires the function to be sufficiently close to linear. 
-Also if the second derivative and first derivative have equal sign for a point, this usually means
-that Newton-Raphson will fail as it overshoots. 
+It turns out that Newton-Raphson does not converge for most starting values in our case.
 In order for this method to be effective, the starting point needs to be \textit{sufficiently} close to the true root.
-That is why I instead use an improved Newton-Raphson method: I approach the root using false position,
-then I switch to Newton-Raphson if the function varies sufficiently in a small enough bracket.
+That is why I instead use an improved Newton-Raphson method: Use Newton-Raphson as long as the new proposed best estimate lies
+within a bracket. If it does not, resort to false position (and potentially even bisection). It turns out that this 
+algorithm is the fastest and most accurate.
 
 
 \begin{table}[H]
@@ -329,7 +333,12 @@ Name & Temperature [K] & Absolute error & Relative error & iterations & time to 
 \end{tabular}
 \end{table}
 
-How many iterations it took? Discuss the convergence of your root finder.
+We see that 
+
+\subsection{Code for finding roots}
+\lstinputlisting[language=Python]{\CodeDir/root_finders.txt}
+
+
 
 \subsection{(2b) More realistic model}
 

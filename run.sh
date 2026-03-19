@@ -70,6 +70,7 @@ echo "Running the Python script to solve the heating and cooling question 2..."
 python3 Q2_Heating_and_cooling.py
 
 # Copy the code to a text file which will be shown in the PDF
+cat root_finders.py > Code/root_finders.txt
 cat Q2_Heating_and_cooling.py > Code/heatingcooling_code.txt
 
 echo "Compiling LaTeX..."
