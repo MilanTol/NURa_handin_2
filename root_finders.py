@@ -134,7 +134,7 @@ def false_position(
         if c < a or c > b:  # if c is outside of bracket, use bisection instead
             c = 0.5 * (a + b)
 
-        Delta = min(np.abs(b - c), np.abs(a - c))
+        Delta = np.abs(b - a)
 
         if Delta < atol:
             if return_iters:
@@ -308,7 +308,7 @@ def improved_newton_raphson(
                 return c, 0, 0, i + 1
             return c, 0, 0
 
-        Delta = min(np.abs(b - c), np.abs(a - c))
+        Delta = np.abs(b - a)
 
         if Delta < atol:
             if return_iters:
