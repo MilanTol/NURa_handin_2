@@ -2,8 +2,8 @@ import numpy as np
 
 
 def finite_difference(
-    function: callable, x: float | np.ndarray, h: float
-) -> float | np.ndarray:
+    function: callable, x: np.ndarray, h: float
+) -> np.ndarray:
     """
     A building block to compute derivative using finite differences
 
@@ -26,12 +26,12 @@ def finite_difference(
 
 def ridders_derivative(
     function: callable,
-    x: float,
+    x: np.ndarray,
     h_init: float,
     d: float,
     eps: float,
     max_iters: int = 10,
-) -> float | np.ndarray:
+) -> np.ndarray:
     """
     Function to compute derivative of "function" at point "x"
 
