@@ -389,7 +389,11 @@ as bisection and false position. All algorithms converge to the correct answer.
 
 In this problem we are asked to find the root of a more complicated funtion for various values of the hydrogen density.
 We compare the same algorithms as before. Since bisection is consistent, this is our reference as to whether 
-the algorithms produce correct answers. 
+the algorithms produce correct answers. In this case we see that only for low density does the false position produce the correct answer
+but it has a lot more trouble finding it compared to bisection and hence is substantially slower. 
+For the other densities it reaches the max iterations without a correct result.
+The improved newton raphson method is returning complete nonsense. 
+
 We see that for larger densities the equilibrium temperature drops. 
 For a small hydrogen density the temperature is enormous. So in all realistic cases,
 these clouds are not in equilibrium and other mechanisms will adjust the density accordingly.
