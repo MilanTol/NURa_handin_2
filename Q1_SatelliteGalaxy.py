@@ -168,8 +168,14 @@ def main():
 
     # Numerically determine maximum to normalize p(x) for sampling:
     # by plotting the distribution, we can see it never exceeds 3: p(x) < 3.
-    pmax = 3
-    random_samples = p_of_x.rejection(N_samples=N_generate, pmax=pmax)
+    pmax = 3  # note that you might have to change this for each set of hyperparameters!
+    random_samples, n_rejected = p_of_x.rejection(
+        N_samples=N_generate, pmax=pmax, rej_samples=True
+    )
+    print(f"number of samples rejected: {n_rejected}")
+    # store compute result
+    with open("Calculations/rejected_samples.txt", "w") as f:
+        f.write(rf"{n_rejected}\n")
 
     edges = np.geomspace(xmin, xmax, 21)
     binwidths = edges[1:] - edges[:-1]

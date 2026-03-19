@@ -29,7 +29,9 @@ class Distribution:
     def __call__(self, x):
         return self.dist(x, *self.args)
 
-    def rejection(self, N_samples: int = 1, pmax: float = 1) -> np.ndarray:
+    def rejection(
+        self, N_samples: int = 1, pmax: float = 1, rej_samples: bool = False
+    ) -> np.ndarray:
         """
         samples x values from the distribution using rejection sampling.
         The distribution must not exceed p_max.
@@ -39,6 +41,8 @@ class Distribution:
             Number of samples
         p_max : float
             upper bound for probability distribution
+        rej_samples: bool
+            whether to also return the number of rejected samples
 
         Returns
         -------
@@ -47,6 +51,7 @@ class Distribution:
         """
         samples = []
         samples_collected = 0
+        samples_rejected = 0
         while samples_collected < N_samples:
             x = self.rng.float(
                 (self.xmin, self.xmax)
@@ -56,4 +61,9 @@ class Distribution:
             if y < dist_val:
                 samples.append(x)
                 samples_collected += 1
+            else:
+                samples_rejected += 1
+
+        if rej_samples:
+            return np.array(samples), samples_rejected
         return np.array(samples)

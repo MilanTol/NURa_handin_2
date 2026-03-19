@@ -125,6 +125,31 @@ Filling in $n(x)$:
   dx.
 \end{equation}
 
+I found it hard to find an analytic inverse of the cumulative distribution, nor did I find a function 
+that fully encloses p for all x and for all other parameters that p depends on, that did not enclose a 
+large chunk of probability space not enclosed by p. Beside, evaluating p is quite fast. So for our current 
+means and purposes I use rejection sampling, even though the
+distribution is quite peaked, which makes rejection sampling a lot more inefficient.
+
+The reason rejection sampling becomes so inefficient is because rejection sampling 
+samples points randomly in an area equal to $p_{max} \times \mathrm{domain range}$. But 
+a probability distribution is normalized so it only contains an area of $1$.
+So for very peaked distributions (where $p_{max} >> 1/\mathrm{domain range}$), we have that
+$(p_{max} \times \mathrm{domain range} - 1) * N \approx N$ samples get rejected when drawing N samples.
+
+The total rejected samples for this run was: \input{Calculations/rejected_samples.txt}.
+So in an ideal world where we would have access to the inverse cumulative distribution
+or a function that tightly encloses p (for all parameters), sampling this distrubution would be over 10 times faster.
+
+We sample 10000 radii and plot the points in 20 logspace-bins, weighted by the inverse binsize. 
+We see that the analytic prediction matches the sampled distribution quite well for high probability regions.
+However, for regions where the probability of ending up in is smaller than $1/10000$, the sampled distribution
+does not provide any information.
+
+The random number generator used for sampling uses a combination of 3 random processes:
+2 XOR operations and 1 MWC operation. Each of these processes carries their own state.
+
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{\PlotDir/my_solution_1b.png}
@@ -132,7 +157,6 @@ Filling in $n(x)$:
 \label{fig: probability distribution satellites}
 \end{figure}
 
-Does your sampled distribution agree with the analytical prediction? How much samples are thrown away because of rejection sampling?
 
 \subsubsection{Code for random number generation}
 \lstinputlisting[language=Python]{\CodeDir/rng.txt}
@@ -227,6 +251,13 @@ The analytic expression for the derivative of the number density as function of 
 \exp[-\left(\frac{x}{b}\right)^c].
 \end{equation}
 
+To numerically compute the derivative we employ Ridder's algorithm. 
+This algorithm uses a sequence of finite difference differentiation attempts and extrapolates 
+these estimates for $h \rightarrow 0$. Where h is the stepsize used for finite difference. 
+This algorithm is extremely powerful if the function is sufficiently smooth and is close to linear
+over the ranges of $h$ considered for the initial estimates.
+The analytic and numeric values of the derivative of the number density of satellites can be seen 
+in the table below.
 \begin{table}[H]
 \centering
 \caption{Derivative of the satellite number density at \(x=1\).}
@@ -240,7 +271,10 @@ Numerical & \input{\CalcDir/satellite_deriv_numeric.txt} \\
 \end{tabular}
 \end{table}
 
-Do your analytical and numerical derivatives agree? Why?
+The analytical and numerical derivative agree to very high precision. 
+This is because the number density of satellites is a product and composition of smooth functions.
+So when taking sufficiently small h, ridders algorithm returns an extremely precise answer.
+The  
 
 \subsubsection{Code for derivative calculation}
 \lstinputlisting[language=Python]{\CodeDir/differentiation.txt}

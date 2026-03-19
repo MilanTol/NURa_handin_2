@@ -91,9 +91,7 @@ def main():
         func, bracket, atol, rtol, max_iters=100, return_iters=True
     )
     time1 = 0.001 * timeit(
-        lambda: bisection(
-            func, bracket, atol, rtol, max_iters=100, return_iters=True
-        ),
+        lambda: bisection(func, bracket, atol, rtol, max_iters=100, return_iters=True),
         number=1000,
     )
 
